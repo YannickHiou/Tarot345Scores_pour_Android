@@ -1,0 +1,45 @@
+{
+  "seuils_bouts": [
+    56,
+    51,
+    41,
+    36
+  ],
+  "multiplicateurs": {
+    "Petite": 1,
+    "Garde": 2,
+    "Garde Sans": 4,
+    "Garde Contre": 6
+  },
+  "petit_au_bout": 10,
+  "chelem": {
+    "annonce_reussi": 400,
+    "non_annonce_reussi": 200,
+    "annonce_rate": -200
+  },
+  "misere_penalite": 10,
+  "base_const": 25,
+  "poignee_values": {
+    "NONE": 0,
+    "SIMPLE": 20,
+    "DOUBLE": 30,
+    "TRIPLE": 40
+  },
+  "poignee_atouts": {
+    "3": {
+      "SIMPLE": 13,
+      "DOUBLE": 15,
+      "TRIPLE": 18
+    },
+    "4": {
+      "SIMPLE": 10,
+      "DOUBLE": 13,
+      "TRIPLE": 15
+    },
+    "5": {
+      "SIMPLE": 8,
+      "DOUBLE": 10,
+      "TRIPLE": 13
+    }
+  }
+}
