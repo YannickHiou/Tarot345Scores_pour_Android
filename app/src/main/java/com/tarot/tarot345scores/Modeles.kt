@@ -101,6 +101,7 @@ data class Historique(
 data class HistoriqueContext(
     val year: Int,
     val month: Int,
+    val day: Int,
     val nbJoueurs: Int
 )
 

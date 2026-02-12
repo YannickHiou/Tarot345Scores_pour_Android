@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
         }
 
         // Pour générer aléatoirement un fichier Historique.json pour les tests
-        // fakeHistorique(constantes, filesDir, 1500)
+        // fakeHistorique(constantes, filesDir, 10)
     }
 
     /**

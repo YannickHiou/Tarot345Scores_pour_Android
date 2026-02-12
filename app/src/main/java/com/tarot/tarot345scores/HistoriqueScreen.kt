@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,7 +88,8 @@ private fun getMonthName(month: Int): String {
 private sealed class HState {
     object Years : HState()
     data class Months(val year: Int) : HState()
-    data class Parties(val year: Int, val month: Int) : HState()
+    data class Days(val year: Int, val month: Int) : HState()
+    data class Parties(val year: Int, val month: Int, val day: Int) : HState()
 }
 
 // Saver pour HState
@@ -96,7 +98,8 @@ private val HStateSaver = Saver<HState, String>(
         when (state) {
             is HState.Years -> "Years"
             is HState.Months -> "Months:${state.year}"
-            is HState.Parties -> "Parties:${state.year}:${state.month}"
+            is HState.Days -> "Days:${state.year}:${state.month}"
+            is HState.Parties -> "Parties:${state.year}:${state.month}:${state.day}"
         }
     },
     restore = { savedState ->
@@ -104,7 +107,8 @@ private val HStateSaver = Saver<HState, String>(
         when (parts[0]) {
             "Years" -> HState.Years
             "Months" -> HState.Months(parts[1].toInt())
-            "Parties" -> HState.Parties(parts[1].toInt(), parts[2].toInt())
+            "Days" -> HState.Days(parts[1].toInt(), parts[2].toInt())
+            "Parties" -> HState.Parties(parts[1].toInt(), parts[2].toInt(), parts[3].toInt())
             else -> HState.Years
         }
     }
@@ -123,7 +127,7 @@ fun HistoriqueScreen(
     val historique by historiqueState
 
     val calendar = remember { Calendar.getInstance() }
-    val sdf = remember { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
+    val sdf = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
 
     val validParties = remember(historique) {
         historique?.parties?.filter { it.donnes.isNotEmpty() } ?: emptyList()
@@ -135,9 +139,7 @@ fun HistoriqueScreen(
     }
 
     var navState by rememberSaveable(stateSaver = HStateSaver) {
-        mutableStateOf<HState>(
-            initialContext?.let { HState.Parties(it.year, it.month) } ?: HState.Years
-        )
+        mutableStateOf<HState>(HState.Years)
     }
 
     // mémoriser le filtre entre navigations / rotations
@@ -160,13 +162,88 @@ fun HistoriqueScreen(
         }.distinct().sortedDescending()
     }
 
-    val partiesForYearMonth = { year: Int, month: Int ->
+    val daysForYearMonth = { year: Int, month: Int ->
+        validParties.filter {
+            calendar.timeInMillis = it.createdAt
+            calendar.get(Calendar.YEAR) == year &&
+                    calendar.get(Calendar.MONTH) == month
+        }.map {
+            calendar.timeInMillis = it.createdAt
+            calendar.get(Calendar.DAY_OF_MONTH)
+        }.distinct().sortedDescending()
+    }
+
+    val partiesForYearMonthDay = { year: Int, month: Int, day: Int ->
         validParties.filter {
             calendar.timeInMillis = it.createdAt
             calendar.get(Calendar.YEAR) == year &&
                     calendar.get(Calendar.MONTH) == month &&
+                    calendar.get(Calendar.DAY_OF_MONTH) == day &&
                     (nbJoueursFiltre == null || it.joueurs.size == nbJoueursFiltre)
         }.sortedByDescending { it.createdAt }
+    }
+
+    // Navigation intelligente automatique
+    LaunchedEffect(validParties, initialContext) {
+        if (validParties.isEmpty()) return@LaunchedEffect
+
+        // Si initialContext fourni, naviguer directement vers le jour approprié
+        if (initialContext != null) {
+            val toutesLesParties = validParties.filter {
+                calendar.timeInMillis = it.createdAt
+                calendar.get(Calendar.YEAR) == initialContext.year &&
+                        calendar.get(Calendar.MONTH) == initialContext.month &&
+                        calendar.get(Calendar.DAY_OF_MONTH) == initialContext.day
+            }
+            val categoriesDisponibles = toutesLesParties.map { it.joueurs.size }.distinct()
+
+            // Restaurer le filtre si la catégorie existe toujours
+            if (categoriesDisponibles.contains(initialContext.nbJoueurs)) {
+                nbJoueursFiltre = initialContext.nbJoueurs
+            } else if (categoriesDisponibles.size <= 1) {
+                nbJoueursFiltre = null
+            }
+
+            // Naviguer directement vers les parties du jour spécifique
+            navState = HState.Parties(initialContext.year, initialContext.month, initialContext.day)
+            return@LaunchedEffect
+        }
+
+        // Navigation intelligente depuis le début (première ouverture)
+        if (years.size == 1) {
+            val year = years.first()
+            val months = monthsForYear(year)
+
+            if (months.size == 1) {
+                val month = months.first()
+                val days = daysForYearMonth(year, month)
+
+                if (days.size == 1) {
+                    val day = days.first()
+                    val toutesLesParties = validParties.filter {
+                        calendar.timeInMillis = it.createdAt
+                        calendar.get(Calendar.YEAR) == year &&
+                                calendar.get(Calendar.MONTH) == month &&
+                                calendar.get(Calendar.DAY_OF_MONTH) == day
+                    }
+                    val categoriesDisponibles = toutesLesParties.map { it.joueurs.size }.distinct()
+
+                    if (categoriesDisponibles.size <= 1) {
+                        nbJoueursFiltre = null
+                    }
+                    navState = HState.Parties(year, month, day)
+                } else {
+                    // Plusieurs jours, afficher les jours
+                    navState = HState.Days(year, month)
+                }
+            } else {
+                // Plusieurs mois, afficher les mois
+                navState = HState.Months(year)
+            }
+        } else {
+            // Plusieurs années, afficher les années
+            navState = HState.Years
+        }
     }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -232,7 +309,8 @@ fun HistoriqueScreen(
             val title = when (val s = navState) {
                 HState.Years -> "Historique"
                 is HState.Months -> "Année ${s.year}"
-                is HState.Parties -> "${getMonthName(s.month)} ${s.year}"
+                is HState.Days -> "${getMonthName(s.month)} ${s.year}"
+                is HState.Parties -> "${s.day} ${getMonthName(s.month)} ${s.year}"
             }
 
             Text(
@@ -259,7 +337,31 @@ fun HistoriqueScreen(
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             items(years) { year ->
                                 Button(
-                                    onClick = { navState = HState.Months(year) },
+                                    onClick = {
+                                        val months = monthsForYear(year)
+                                        if (months.size == 1) {
+                                            val month = months.first()
+                                            val days = daysForYearMonth(year, month)
+                                            if (days.size == 1) {
+                                                val day = days.first()
+                                                val parties =
+                                                    partiesForYearMonthDay(year, month, day)
+                                                val categoriesDisponibles =
+                                                    parties.map { it.joueurs.size }.distinct()
+
+                                                if (categoriesDisponibles.size <= 1) {
+                                                    nbJoueursFiltre = null
+                                                    navState = HState.Parties(year, month, day)
+                                                } else {
+                                                    navState = HState.Parties(year, month, day)
+                                                }
+                                            } else {
+                                                navState = HState.Days(year, month)
+                                            }
+                                        } else {
+                                            navState = HState.Months(year)
+                                        }
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -285,17 +387,60 @@ fun HistoriqueScreen(
                 is HState.Months -> {
                     val months = monthsForYear(s.year)
                     if (months.isEmpty()) {
-                        Box(
+                        Column(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Aucune partie pour ${s.year}", color = Color.White)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("Aucune partie pour ${s.year}", color = Color.White)
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Button(
+                                    onClick = {
+                                        nbJoueursFiltre = null
+                                        navState = HState.Years
+                                    },
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Text("Retour")
+                                }
+                                Button(
+                                    onClick = onBack,
+                                    modifier = Modifier.padding(4.dp)
+                                ) { Text("Accueil") }
+                            }
                         }
                     } else {
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             items(months) { month ->
                                 Button(
-                                    onClick = { navState = HState.Parties(s.year, month) },
+                                    onClick = {
+                                        val days = daysForYearMonth(s.year, month)
+                                        if (days.size == 1) {
+                                            val day = days.first()
+                                            val parties = partiesForYearMonthDay(s.year, month, day)
+                                            val categoriesDisponibles =
+                                                parties.map { it.joueurs.size }.distinct()
+
+                                            if (categoriesDisponibles.size <= 1) {
+                                                nbJoueursFiltre = null
+                                                navState = HState.Parties(s.year, month, day)
+                                            } else {
+                                                navState = HState.Parties(s.year, month, day)
+                                            }
+                                        } else {
+                                            navState = HState.Days(s.year, month)
+                                        }
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
@@ -323,8 +468,112 @@ fun HistoriqueScreen(
                     }
                 }
 
+                is HState.Days -> {
+                    val days = daysForYearMonth(s.year, s.month)
+                    if (days.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "Aucune partie pour ${getMonthName(s.month)} ${s.year}",
+                                    color = Color.White
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Button(
+                                    onClick = {
+                                        nbJoueursFiltre = null
+                                        val months = monthsForYear(s.year)
+                                        if (months.size == 1) {
+                                            navState = HState.Years
+                                        } else {
+                                            navState = HState.Months(s.year)
+                                        }
+                                    },
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Text("Retour")
+                                }
+                                Button(
+                                    onClick = onBack,
+                                    modifier = Modifier.padding(4.dp)
+                                ) { Text("Accueil") }
+                            }
+                        }
+                    } else {
+
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            items(days) { day ->
+                                Button(
+                                    onClick = {
+                                        val parties = partiesForYearMonthDay(s.year, s.month, day)
+                                        val categoriesDisponibles =
+                                            parties.map { it.joueurs.size }.distinct()
+
+                                        if (categoriesDisponibles.size <= 1) {
+                                            nbJoueursFiltre = null
+                                        }
+                                        navState = HState.Parties(s.year, s.month, day)
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Text("$day ${getMonthName(s.month)} ${s.year}")
+                                }
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = {
+                                val months = monthsForYear(s.year)
+                                if (months.size == 1) {
+                                    navState = HState.Years
+                                } else {
+                                    navState = HState.Months(s.year)
+                                }
+                            },
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Text("Retour")
+                        }
+                        Button(
+                            onClick = onBack,
+                            modifier = Modifier.padding(4.dp)
+                        ) { Text("Accueil") }
+                    }
+                }
+
                 is HState.Parties -> {
-                    if (nbJoueursDisponibles.size > 1) {
+                    // Calculer les catégories disponibles sur TOUTES les parties du jour (sans filtre)
+                    val toutesLesParties = validParties.filter {
+                        calendar.timeInMillis = it.createdAt
+                        calendar.get(Calendar.YEAR) == s.year &&
+                                calendar.get(Calendar.MONTH) == s.month &&
+                                calendar.get(Calendar.DAY_OF_MONTH) == s.day
+                    }
+
+                    val categoriesDisponibles =
+                        toutesLesParties.map { it.joueurs.size }.distinct().sorted()
+
+                    // Afficher le filtre seulement si plus d'une catégorie
+                    if (categoriesDisponibles.size > 1) {
                         InlineBox(
                             title = "Filtrer par nombre de joueurs",
                             modifier = Modifier.fillMaxWidth()
@@ -346,7 +595,7 @@ fun HistoriqueScreen(
                                     Text("Tous")
                                 }
 
-                                nbJoueursDisponibles.forEach { nb ->
+                                categoriesDisponibles.forEach { nb ->
                                     Button(
                                         onClick = { nbJoueursFiltre = nb },
                                         colors = ButtonDefaults.buttonColors(
@@ -364,17 +613,54 @@ fun HistoriqueScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    val parties = partiesForYearMonth(s.year, s.month)
-                    if (parties.isEmpty()) {
-                        Box(
+                    val partiesFiltrees = partiesForYearMonthDay(s.year, s.month, s.day)
+                    if (partiesFiltrees.isEmpty()) {
+                        Column(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Aucune partie", color = Color.White)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("Aucune partie", color = Color.White)
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Button(
+                                    onClick = {
+                                        nbJoueursFiltre =
+                                            null  // Réinitialiser le filtre lors du retour
+                                        val days = daysForYearMonth(s.year, s.month)
+                                        if (days.size == 1) {
+                                            val months = monthsForYear(s.year)
+                                            if (months.size == 1) {
+                                                navState = HState.Years
+                                            } else {
+                                                navState = HState.Months(s.year)
+                                            }
+                                        } else {
+                                            navState = HState.Days(s.year, s.month)
+                                        }
+                                    },
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Text("Retour")
+                                }
+                                Button(
+                                    onClick = onBack,
+                                    modifier = Modifier.padding(4.dp)
+                                ) { Text("Accueil") }
+                            }
                         }
                     } else {
                         LazyColumn(modifier = Modifier.weight(1f)) {
-                            items(parties) { partie ->
+                            items(partiesFiltrees) { partie ->
                                 Surface(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -394,11 +680,16 @@ fun HistoriqueScreen(
                                     } catch (e: Exception) {
                                         partie.createdAt.toString()
                                     }
-                                    Text(
-                                        text = dateStr,
-                                        modifier = Modifier.padding(16.dp),
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = dateStr,
+                                            modifier = Modifier.padding(16.dp),
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -425,6 +716,10 @@ fun HistoriqueScreen(
                                             calendar.timeInMillis = partie.createdAt
                                             calendar.get(Calendar.MONTH)
                                         },
+                                        day = run {
+                                            calendar.timeInMillis = partie.createdAt
+                                            calendar.get(Calendar.DAY_OF_MONTH)
+                                        },
                                         nbJoueurs = partie.joueurs.size
                                     )
                                     onSupprimerPartie(partie, ctx)
@@ -441,6 +736,10 @@ fun HistoriqueScreen(
                                             calendar.timeInMillis = partie.createdAt
                                             calendar.get(Calendar.MONTH)
                                         },
+                                        day = run {
+                                            calendar.timeInMillis = partie.createdAt
+                                            calendar.get(Calendar.DAY_OF_MONTH)
+                                        },
                                         nbJoueurs = partie.joueurs.size
                                     )
                                     onStatistiquesPartie(partie, ctx)
@@ -456,7 +755,20 @@ fun HistoriqueScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { navState = HState.Months(s.year) },
+                            onClick = {
+                                nbJoueursFiltre = null  // Réinitialiser le filtre lors du retour
+                                val days = daysForYearMonth(s.year, s.month)
+                                if (days.size == 1) {
+                                    val months = monthsForYear(s.year)
+                                    if (months.size == 1) {
+                                        navState = HState.Years
+                                    } else {
+                                        navState = HState.Months(s.year)
+                                    }
+                                } else {
+                                    navState = HState.Days(s.year, s.month)
+                                }
+                            },
                             modifier = Modifier.padding(4.dp)
                         ) {
                             Text("Retour")
