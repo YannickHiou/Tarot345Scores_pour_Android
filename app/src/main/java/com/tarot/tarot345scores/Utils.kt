@@ -29,6 +29,7 @@ import java.util.UUID
 
 private const val HISTO_FILENAME = "historique.json"
 private const val JOUEURS_FILENAME = "joueurs.json"
+const val JEUX_COULEUR = 0XFF000000 //0xFF00BCD4
 
 private val json = Json { var prettyPrint = true; encodeDefaults = true }
 

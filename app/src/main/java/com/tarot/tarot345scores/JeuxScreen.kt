@@ -45,6 +45,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 
 @Composable
@@ -63,14 +65,20 @@ fun JeuxScreen(
     onLongPressDonne: (Donne) -> Unit,
     viewModel: MainViewModel
 ) {
-    val separatorColor = Color.Black
+    val separatorColor = Color.White
     val separatorStrokeDp = 2.dp
     var longPressDonne by remember { mutableStateOf<Donne?>(null) }
+    val highlightColor = Color(0xFF000000) // Color(0xFFFFB6C1)
+
+    val nbCols = remember(donnes, joueurs) {
+        val maxScoresSize = donnes.maxOfOrNull { it.scores.size } ?: 0
+        maxOf(joueurs.size, maxScoresSize)
+    }.coerceAtLeast(0)
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF00BCD4)) // bleu cyan
+            .background(Color(JEUX_COULEUR)) // bleu cyan
     ) {
         Column(
             modifier = Modifier
@@ -84,11 +92,10 @@ fun JeuxScreen(
                     .padding(horizontal = 8.dp)
                     .drawBehind {
                         // Draw vertical separators across the entire table area
-                        if (joueurs.isNotEmpty()) {
-                            val n = joueurs.size
-                            val columnW = size.width / n
+                        if (nbCols > 0) {
+                            val columnW = size.width / nbCols
                             val stroke = separatorStrokeDp.toPx()
-                            for (i in 1 until n) {
+                            for (i in 1 until nbCols) {
                                 val x = columnW * i
                                 drawLine(
                                     color = separatorColor,
@@ -122,20 +129,30 @@ fun JeuxScreen(
                                                 donne
                                             )
                                         },
-
                                         onLongClick = {
                                             longPressDonne = donne
                                         }
-
                                     )
                             ) {
                                 val scores = donne.scores
-                                scores.forEach { s ->
+                                val maxScore = scores.maxOrNull()
+                                val uniqueMax =
+                                    maxScore != null && scores.count { it == maxScore } == 1
+
+                                for (i in 0 until nbCols) {
+                                    val s = scores.getOrNull(i) ?: 0
+                                    val isMax =
+                                        maxScore != null && (if (uniqueMax) s == maxScore else s == maxScore)
                                     Box(
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier
+                                            .weight(1f),
+                                        //.then(if (isMax) Modifier.background(highlightColor) else Modifier),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(text = s.toString(), color = Color.White)
+                                        Text(
+                                            text = s.toString(),
+                                            color = if (isMax) Color.Green else Color.White
+                                        )
                                     }
                                 }
                             }
@@ -144,6 +161,10 @@ fun JeuxScreen(
 
                     HorizontalDivider(color = separatorColor, thickness = separatorStrokeDp)
 
+                    // Ligne des totaux
+                    val maxTotal = totals.maxOrNull()
+                    val uniqueTotalMax = maxTotal != null && totals.count { it == maxTotal } == 1
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -151,15 +172,20 @@ fun JeuxScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        totals.forEach { total ->
+                        for (i in 0 until nbCols) {
+                            val total = totals.getOrNull(i) ?: 0
+                            val isMax =
+                                maxTotal != null && (if (uniqueTotalMax) total == maxTotal else total == maxTotal)
                             Box(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f),
+                                //.then(if (isMax) Modifier.background(highlightColor) else Modifier),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = total.toString(),
                                     fontSize = 14.sp,
-                                    color = Color.Yellow
+                                    color = if (isMax) Color.Green else Color.Yellow
                                 )
                             }
                         }
@@ -182,6 +208,10 @@ fun JeuxScreen(
                             onRetour()
                         }
                     },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    ),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(text = if (isReadOnly) "Retour" else "Terminer la partie")
@@ -190,7 +220,14 @@ fun JeuxScreen(
                 // Afficher "Nouvelle Donne" seulement si pas en lecture seule
                 if (!isReadOnly) {
                     Spacer(modifier = Modifier.width(12.dp))
-                    Button(onClick = onNouvelleDonne, modifier = Modifier.weight(1f)) {
+                    Button(
+                        onClick = onNouvelleDonne,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.Black
+                        )
+                    ) {
                         Text(text = "Nouvelle Donne")
                     }
                 }
@@ -213,21 +250,21 @@ fun HeaderRow(joueurs: List<Joueur>) {
         modifier = Modifier
             .fillMaxWidth()
             .height(30.dp)
-            .background(Color(0xFF00BCD4))
+            .background(Color(JEUX_COULEUR))
     ) {
         joueurs.forEach { joueur ->
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .border(1.dp, Color.Black)
+                    .border(1.dp, Color.White)
                     .padding(end = 4.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
                     text = joueur.nomUI,
                     fontSize = 14.sp,
-                    color = Color.Black,
+                    color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier

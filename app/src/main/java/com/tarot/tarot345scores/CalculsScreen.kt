@@ -321,7 +321,7 @@ fun CalculsScreen(
                             color = Color.White,
                             style = TextStyle(fontSize = LIGNE1)
                         )
-                        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             nonEmpty.forEach { poignee ->
                                 val poigneeIndex = poignee.index
                                 val poigneeType = poignee.type
@@ -534,7 +534,7 @@ fun RowScope.Cell(
         modifier = Modifier
             .weight(weight)
             .height(cellHeight)
-            .border(1.dp, Color.Black)
+            .border(1.dp, Color.White)
             .background(backgroundColor)
             .padding(horizontal = horizontalPadding),
         contentAlignment = Alignment.CenterEnd
@@ -569,7 +569,7 @@ fun afficherScoresTableLigneEntete(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black)
+            .background(Color.White)
     ) {
         Row(
             modifier = Modifier
@@ -582,8 +582,8 @@ fun afficherScoresTableLigneEntete(
                     fontSize = cellFontSize,
                     weight = 1f,
                     cellHeight = rowHeight,
-                    backgroundColor = Color(0xFF00BCD4),
-                    textColor = Color.Black
+                    backgroundColor = Color(JEUX_COULEUR),
+                    textColor = Color.White
                 )
             }
         }
@@ -605,7 +605,7 @@ fun afficherScoresTableLigneScores(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black)
+            .background(Color.White)
     ) {
         if (trait) {
             Box(
@@ -630,7 +630,7 @@ fun afficherScoresTableLigneScores(
                     backgroundColor = if (total) {
                         Color(0xFFFFB6C1)
                     } else {
-                        Color.DarkGray
+                        Color.Black
                     },
                     textColor = if (total) Color.Black else Color.White,
                 )

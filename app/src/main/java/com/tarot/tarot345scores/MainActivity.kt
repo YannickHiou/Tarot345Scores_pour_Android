@@ -54,6 +54,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
@@ -138,7 +139,7 @@ class MainActivity : ComponentActivity() {
         val constantes = loadConstantesFromAssets(this, "constantes.json")
 
         // Pour générer aléatoirement un fichier Historique.json pour les tests
-        fakeHistorique(constantes,  filesDir, 1000)
+        //fakeHistorique(constantes,  filesDir, 0)
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -584,7 +585,7 @@ fun Tarot345ScoresApp(
                 ) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text(
-                            "Action sur la donne",
+                            "Actions sur la donne",
                             color = Color.White,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
@@ -711,12 +712,22 @@ fun CloturePartiDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text("Terminer la partie") },
         confirmButton = {
-            Button(onClick = onConfirm) {
+            Button(
+                onClick = onConfirm, colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.Black
+                )
+            ) {
                 Text("Oui")
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss, colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.Black
+                )
+            ) {
                 Text("Non")
             }
         }

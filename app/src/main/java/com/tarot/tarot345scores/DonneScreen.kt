@@ -157,6 +157,7 @@ fun DonneScreen(
 
     val preneurDisplay: String =
         preneurIndex?.let { joueurs.getOrNull(it)?.nomUI } ?: "Non sélectionné"
+
     val appeleDisplay: String =
         appeleIndex?.let { joueurs.getOrNull(it)?.nomUI } ?: "Non sélectionné"
 
@@ -1162,7 +1163,7 @@ fun MisereSelectionDialogIndices(
 
                     Surface(
                         color = if (selected) Color.DarkGray else Color.Black,
-                        shape = RoundedCornerShape(percent = 50), // <- arrondi 50%
+                        shape = RoundedCornerShape(percent = 50),
                         border = BorderStroke(1.dp, Color.White),
                         modifier = Modifier
                             .fillMaxWidth()

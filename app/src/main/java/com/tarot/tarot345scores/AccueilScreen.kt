@@ -105,7 +105,16 @@ fun AccueilScreen(
         Spacer(modifier = Modifier.height(100.dp))
 
         // Boutons
-        Button(onClick = onAproposClick) { Text("A propos") }
+        Button(
+            onClick = onAproposClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.Black
+            )
+        )
+        {
+            Text("A propos")
+        }
         Spacer(modifier = Modifier.height(8.dp))
 
         val canStart = !isLoading && joueurs.size >= requiredNbJoueurs_
@@ -130,18 +139,46 @@ fun AccueilScreen(
             )
 
         ) { Text("Gestion des joueurs") }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = onHistoriqueClick) { Text("Historique") }
+        Button(
+            onClick = onHistoriqueClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.Black
+            )
+        )
+        {
+            Text("Historique")
+        }
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = onStatistiquesClick) { Text("Statistiques") }
+        Button(
+            onClick = onStatistiquesClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.Black
+            )
+
+        ) { Text("Statistiques") }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = onConstantesClick) { Text("Constantes") }
+        Button(
+            onClick = onConstantesClick, colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.Black
+            )
+        ) { Text("Constantes") }
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = onReglesClick) { Text("Règles") }
+        Button(
+            onClick = onReglesClick, colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.Black
+            )
+        ) { Text("Règles") }
 
         Spacer(modifier = Modifier.weight(1f))
 

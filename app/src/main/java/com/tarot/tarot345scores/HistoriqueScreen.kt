@@ -64,6 +64,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import java.text.SimpleDateFormat
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 
 private fun getMonthName(month: Int): String {
@@ -221,6 +222,8 @@ fun HistoriqueScreen(
 
             // Naviguer directement vers les parties du jour spécifique
             navState = HState.Parties(initialContext.year, initialContext.month, initialContext.day)
+
+
             return@LaunchedEffect
         }
 
@@ -468,7 +471,7 @@ fun HistoriqueScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 4.dp),
                                 ) {
                                     Text(getMonthName(month))
                                 }
@@ -552,7 +555,7 @@ fun HistoriqueScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 4.dp),
                                 ) {
                                     Text("$day ${getMonthName(s.month)} ${s.year}")
                                 }
@@ -695,7 +698,7 @@ fun HistoriqueScreen(
                                             }
                                         ),
                                     tonalElevation = 2.dp,
-                                    shape = MaterialTheme.shapes.medium,
+                                    shape = RoundedCornerShape(percent = 50),
                                     color = MaterialTheme.colorScheme.primaryContainer
                                 ) {
                                     val dateStr = try {
@@ -705,12 +708,12 @@ fun HistoriqueScreen(
                                     }
                                     Box(
                                         modifier = Modifier.fillMaxWidth(),
-                                        contentAlignment = Alignment.Center
+                                        contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
                                             text = dateStr,
                                             modifier = Modifier.padding(16.dp),
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         )
                                     }
                                 }
@@ -837,7 +840,7 @@ fun ActionOnPartieDialog(
                         .padding(bottom = 12.dp)
                 )
 
-                CompositionLocalProvider(LocalContentColor provides Color.White) {
+                CompositionLocalProvider(LocalContentColor provides Color.Black) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             onClick = { onReprendre(partie) },
