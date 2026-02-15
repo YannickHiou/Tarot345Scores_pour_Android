@@ -138,7 +138,7 @@ class MainActivity : ComponentActivity() {
         val constantes = loadConstantesFromAssets(this, "constantes.json")
 
         // Pour générer aléatoirement un fichier Historique.json pour les tests
-        //fakeHistorique(constantes,  filesDir, 0)
+        fakeHistorique(constantes,  filesDir, 1000)
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -231,6 +231,9 @@ fun Tarot345ScoresApp(
 
     var modeTriJoueurs by remember { mutableStateOf(0) }
 
+    var joueurSelectionneHistorique by remember { mutableStateOf<Joueur?>(null) }
+    var nbJoueursFiltreHistorique by remember { mutableStateOf<Int?>(null) }
+
     when (currentScreen) {
 
         is Screen.Accueil -> AccueilScreen(
@@ -247,11 +250,15 @@ fun Tarot345ScoresApp(
             },
             onAproposClick = { currentScreen = Screen.Apropos },
             onJoueursClick = { currentScreen = Screen.Joueurs },
-            onHistoriqueClick = { currentScreen = Screen.Historique },
             onStatistiquesClick = { currentScreen = Screen.StatistiquesGlobales },
             onConstantesClick = { currentScreen = Screen.Constantes },
             onReglesClick = { (context as? MainActivity)?.openPdfFromAssets("R-RO201206.pdf") },
-            requiredNbJoueurs = nbJoueurs
+            requiredNbJoueurs = nbJoueurs,
+            onHistoriqueClick = {
+                joueurSelectionneHistorique = null
+                nbJoueursFiltreHistorique = null
+                currentScreen = Screen.Historique
+            }
         )
 
         is Screen.Jouer -> ChoixJoueursScreen(
@@ -433,7 +440,9 @@ fun Tarot345ScoresApp(
                     viewModel.deletePartie(partie.id)
                     currentScreen = Screen.Historique
                 },
-                initialContext = historiqueContext
+                initialContext = historiqueContext,
+                joueurSelectionne = joueurSelectionneHistorique,
+                filtreNbJoueurs = nbJoueursFiltreHistorique
             )
         }
 
@@ -523,7 +532,12 @@ fun Tarot345ScoresApp(
                                 currentScreen = Screen.Joueurs
                             }
                         },
-                        fromPartie = selectedPartieId != null
+                        fromPartie = selectedPartieId != null,
+                        onNavigateToHistorique = { joueur, nbJoueursFiltre ->
+                            joueurSelectionneHistorique = joueur
+                            nbJoueursFiltreHistorique = nbJoueursFiltre
+                            currentScreen = Screen.Historique
+                        }
                     )
                 }
             }

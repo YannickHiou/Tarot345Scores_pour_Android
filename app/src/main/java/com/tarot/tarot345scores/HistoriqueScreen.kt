@@ -122,15 +122,30 @@ fun HistoriqueScreen(
     onReprendrePartie: (Partie) -> Unit,
     onStatistiquesPartie: (Partie, HistoriqueContext) -> Unit,
     onSupprimerPartie: (Partie, HistoriqueContext) -> Unit,
-    initialContext: HistoriqueContext? = null
+    initialContext: HistoriqueContext? = null,
+    joueurSelectionne: Joueur? = null,
+    filtreNbJoueurs: Int? = null
 ) {
     val historique by historiqueState
 
     val calendar = remember { Calendar.getInstance() }
     val sdf = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
 
-    val validParties = remember(historique) {
-        historique?.parties?.filter { it.donnes.isNotEmpty() } ?: emptyList()
+    val subTitle = if (joueurSelectionne == null) "globale" else if (filtreNbJoueurs == null) {
+        "Parties de ${joueurSelectionne.nomUI}"
+    } else {
+        "Parties à $filtreNbJoueurs  de ${joueurSelectionne.nomUI}"
+    }
+
+    val validParties = remember(historique, joueurSelectionne, filtreNbJoueurs) {
+        historique?.parties
+            ?.filter { it.donnes.isNotEmpty() }
+            ?.filter { partie ->
+                joueurSelectionne == null || partie.joueurs.any { it.id == joueurSelectionne.id }
+            }
+            ?.filter { partie ->
+                filtreNbJoueurs == null || partie.joueurs.size == filtreNbJoueurs
+            } ?: emptyList()
     }
 
     // --- filtre par nombre de joueurs ---
@@ -143,7 +158,7 @@ fun HistoriqueScreen(
     }
 
     // mémoriser le filtre entre navigations / rotations
-    var nbJoueursFiltre by rememberSaveable { mutableStateOf<Int?>(null) }
+    var nbJoueursFiltre by rememberSaveable { mutableStateOf(filtreNbJoueurs) }
 
     val years = remember(validParties) {
         validParties.map {
@@ -317,6 +332,16 @@ fun HistoriqueScreen(
                 text = title,
                 color = Color.White,
                 fontSize = 22.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            )
+
+            Text(
+                text = subTitle,
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -512,7 +537,6 @@ fun HistoriqueScreen(
                             }
                         }
                     } else {
-
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             items(days) { day ->
                                 Button(
@@ -572,8 +596,8 @@ fun HistoriqueScreen(
                     val categoriesDisponibles =
                         toutesLesParties.map { it.joueurs.size }.distinct().sorted()
 
-                    // Afficher le filtre seulement si plus d'une catégorie
-                    if (categoriesDisponibles.size > 1) {
+                    // Afficher le filtre seulement si plus d'une catégorie et si filtreNbJoueurs n'est pas déjà défini
+                    if (categoriesDisponibles.size > 1 && filtreNbJoueurs == null) {
                         InlineBox(
                             title = "Filtrer par nombre de joueurs",
                             modifier = Modifier.fillMaxWidth()
@@ -634,8 +658,7 @@ fun HistoriqueScreen(
                             ) {
                                 Button(
                                     onClick = {
-                                        nbJoueursFiltre =
-                                            null  // Réinitialiser le filtre lors du retour
+                                        nbJoueursFiltre = null
                                         val days = daysForYearMonth(s.year, s.month)
                                         if (days.size == 1) {
                                             val months = monthsForYear(s.year)
@@ -756,7 +779,7 @@ fun HistoriqueScreen(
                     ) {
                         Button(
                             onClick = {
-                                nbJoueursFiltre = null  // Réinitialiser le filtre lors du retour
+                                nbJoueursFiltre = null
                                 val days = daysForYearMonth(s.year, s.month)
                                 if (days.size == 1) {
                                     val months = monthsForYear(s.year)

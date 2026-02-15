@@ -161,12 +161,12 @@ fun getDefaultJoueurs(load:Boolean=true): List<Joueur> {
         emptyList<Joueur>()
     } else {
         listOf(
-            Joueur("Yannick", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+            Joueur("Yannick", "f47ac10b-58cc-4372-fsde-0e02b2c3d479"),
             Joueur("Christine", "9a1b2c3d-4e5f-6789-abcd-ef0123456789"),
             Joueur("Aurélie", "d290f1ee-6c54-4b01-90e6-d701748f0851"),
             Joueur("Alexis", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
             Joueur("Camille", "6fa459ea-ee8a-3ca4-894e-db77e160355e"),
-            Joueur("Laïla", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+            Joueur("Laïla", "f47ac10b-58cc-5729-a567-0e02b2c3d479"),
             Joueur("Christophe", "3d6f4e2a-9b1c-4f8e-a3d5-7c8b9e0f1a2b"),
             Joueur("Florence", "8e7d6c5b-4a3f-2e1d-0c9b-8a7f6e5d4c3b"),
             Joueur("Clémence", "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f7a8"),

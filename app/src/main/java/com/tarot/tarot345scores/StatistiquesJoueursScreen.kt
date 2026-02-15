@@ -41,7 +41,8 @@ fun StatistiquesJoueursScreen(
     historique: Historique,
     joueur: Joueur,
     onNavigateBack: () -> Unit,
-    fromPartie: Boolean = false
+    fromPartie: Boolean = false,
+    onNavigateToHistorique: (Joueur, Int?) -> Unit = { _, _ -> }
 ) {
     val analyseur = remember { AnalyseurHistorique() }
 
@@ -190,7 +191,9 @@ fun StatistiquesJoueursScreen(
                         ) {
                             Box(modifier = Modifier.fillMaxWidth()) {
                                 OutlinedButton(
-                                    onClick = { menuExpanded = true },
+                                    onClick = {
+                                        onNavigateToHistorique(joueur, nbJoueursFiltre)
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     border = BorderStroke(1.dp, Color.White),
                                     colors = ButtonDefaults.outlinedButtonColors(

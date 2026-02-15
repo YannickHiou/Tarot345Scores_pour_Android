@@ -35,21 +35,20 @@ fun fakeHistorique(
     filesDir: File,
     nb_parties: Int
 ) {
+    val joueursFile = File(filesDir, "joueurs.json")
+    val historiqueFile = File(filesDir, "historique.json")
     val json = Json { prettyPrint = true }
 
     if (nb_parties == 0) {
         val joueurs = mutableListOf<Partie>()
-        val joueursFile = File(filesDir, "joueurs.json")
         joueursFile.writeText(json.encodeToString(joueurs))
 
         val historique = Historique(parties = mutableListOf<Partie>())
-        val historiqueFile = File(filesDir, "historique.json")
         historiqueFile.writeText(json.encodeToString(historique))
         return
     }
 
     var joueurs = getDefaultJoueurs(false)
-    val joueursFile = File(filesDir, "joueurs.json")
     joueursFile.writeText(json.encodeToString(joueurs))
 
     val contratsType = ContratType.entries.map { it.displayName }
@@ -89,7 +88,6 @@ fun fakeHistorique(
     val historique = Historique(parties = parties)
 
     // Sauvegarder dans historique.json
-    val historiqueFile = File(filesDir, "historique.json")
     historiqueFile.writeText(json.encodeToString(historique))
 }
 
@@ -102,7 +100,7 @@ private fun genere_parite(
     seuils: List<Int>,
     constantes: ConstantesConfig
 ): Partie {
-    val nbDonnes = Random.nextInt(5, 16)
+    val nbDonnes = Random.nextInt(10, 20)
     val donnes = mutableListOf<Donne>()
 
     repeat(nbDonnes) { donneIndex ->
