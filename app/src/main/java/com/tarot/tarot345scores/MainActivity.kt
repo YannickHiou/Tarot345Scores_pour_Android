@@ -137,14 +137,13 @@ class MainActivity : ComponentActivity() {
 
         val constantes = loadConstantesFromAssets(this, "constantes.json")
 
+        // Pour générer aléatoirement un fichier Historique.json pour les tests
+        //fakeHistorique(constantes,  filesDir, 0)
+
         setContent {
             val viewModel: MainViewModel = viewModel()
             val joueurs by viewModel.joueurs.collectAsState()
             val historique by viewModel.historique.collectAsState()
-
-            // Pour générer aléatoirement un fichier Historique.json pour les tests
-            fakeHistorique(constantes, viewModel, filesDir, 1000)
-
             Tarot345ScoresTheme(dynamicColor = true) {
                 Tarot345ScoresApp(constantes, joueurs = joueurs, historique = historique, viewModel)
             }
