@@ -27,36 +27,31 @@ import kotlin.random.Random
 
 fun fakeHistorique(
     constantes: ConstantesConfig,
+    viewModel: MainViewModel,
     filesDir: File,
     nb_parties: Int
 ) {
     val json = Json { prettyPrint = true }
 
-    // Base de 15 joueurs
-    /*
     val joueurs = listOf(
-        "Yannick", "Christine", "Aurélie", "Alexis", "Camille", "Laïla", "Christophe", "Florence",
-        "Clémence", "Arthur", "Eloïse", "Martin", "Valérie", "Benjamin", "Armand"
-    )
-     */
-    val joueurs = listOf(
-        Joueur("A", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-        Joueur("B", "9a1b2c3d-4e5f-6789-abcd-ef0123456789"),
-        Joueur("C", "d290f1ee-6c54-4b01-90e6-d701748f0851"),
-        Joueur("D", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-        Joueur("E", "6fa459ea-ee8a-3ca4-894e-db77e160355e"),
-        Joueur("F", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-        Joueur("G", "3d6f4e2a-9b1c-4f8e-a3d5-7c8b9e0f1a2b"),
-        Joueur("H", "8e7d6c5b-4a3f-2e1d-0c9b-8a7f6e5d4c3b"),
-        Joueur("I", "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f7a8"),
-        Joueur("J", "6f8e9d0c-1b2a-4536-8794-a5b6c7d8e9f0"),
-        Joueur("K", "2c4d6e8f-0a1b-4c3d-9e5f-7a8b9c0d1e2f"),
-        Joueur("L", "9b8a7f6e-5d4c-4321-b0a9-f8e7d6c5b4a3"),
-        Joueur("M", "5e6f7a8b-9c0d-4e1f-a2b3-c4d5e6f7a8b9"),
-        Joueur("N", "d4c3b2a1-f0e9-4d8c-b7a6-5f4e3d2c1b0a"),
-        Joueur("O", "7a8b9c0d-1e2f-4536-9748-a5b6c7d8e9f0"),
+        Joueur("Yannick", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+        Joueur("Christine", "9a1b2c3d-4e5f-6789-abcd-ef0123456789"),
+        Joueur("Aurélie", "d290f1ee-6c54-4b01-90e6-d701748f0851"),
+        Joueur("Alexis", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+        Joueur("Camille", "6fa459ea-ee8a-3ca4-894e-db77e160355e"),
+        Joueur("Laïla", "f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+        Joueur("Christophe", "3d6f4e2a-9b1c-4f8e-a3d5-7c8b9e0f1a2b"),
+        Joueur("Florence", "8e7d6c5b-4a3f-2e1d-0c9b-8a7f6e5d4c3b"),
+        Joueur("Clémence", "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f7a8"),
+        Joueur("Arthur", "6f8e9d0c-1b2a-4536-8794-a5b6c7d8e9f0"),
+        Joueur("Eloïse", "2c4d6e8f-0a1b-4c3d-9e5f-7a8b9c0d1e2f"),
+        Joueur("Martin", "9b8a7f6e-5d4c-4321-b0a9-f8e7d6c5b4a3"),
+        Joueur("Valérie", "5e6f7a8b-9c0d-4e1f-a2b3-c4d5e6f7a8b9"),
+        Joueur("Benjamin", "d4c3b2a1-f0e9-4d8c-b7a6-5f4e3d2c1b0a"),
+        Joueur("Armand", "7a8b9c0d-1e2f-4536-9748-a5b6c7d8e9f0"),
     )
 
+    viewModel.updateJoueurs(joueurs)
 
     val contratsType = ContratType.entries.map { it.displayName }
     val poigneesType = PoigneeType.entries.map { it.displayName }

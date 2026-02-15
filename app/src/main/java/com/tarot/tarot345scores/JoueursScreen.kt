@@ -66,14 +66,13 @@ import java.util.UUID
 fun JoueursScreen(
     joueurs: List<Joueur>,
     historique: Historique?,
+    modeTriActuel: Int = 0, // AJOUTER CE PARAMÈTRE
+    onUpdateModeTriActuel: (Int) -> Unit = {}, // AJOUTER CE CALLBACK
     onUpdateJoueurs: (List<Joueur>) -> Unit,
     onRetour: () -> Unit,
     onStatistiquesJoueur: (Joueur) -> Unit,
     onContinuer: () -> Unit
 ) {
-//    val context = LocalContext.current
-  //  val scope = rememberCoroutineScope()
-
     val joueursAvecHistorique = remember(historique) {
         val ids = mutableSetOf<String>()
         historique?.parties?.forEach { partie ->
@@ -81,7 +80,18 @@ fun JoueursScreen(
         }
         ids
     }
-    var triAlphabetique by remember { mutableStateOf(false) }
+
+    // Calculer les statistiques une seule fois
+    val statistiques = remember(historique) {
+        if (historique != null) {
+            AnalyseurHistorique().analyser(historique).first
+        } else {
+            emptyMap()
+        }
+    }
+
+    // SUPPRIMER CETTE LIGNE : var modeTriActuel by remember { mutableStateOf(0) }
+    // modeTriActuel vient maintenant des paramètres
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
@@ -90,9 +100,35 @@ fun JoueursScreen(
     var editNom by remember { mutableStateOf(TextFieldValue("")) }
     var newNom by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Fonction de tri (travaille sur la liste fournie en param)
-    val joueursTries = remember(joueurs, triAlphabetique) {
-        if (triAlphabetique) joueurs.sortedBy { it.nomUI.lowercase() } else joueurs
+    // Fonction de tri
+    val joueursTries = remember(joueurs, modeTriActuel, statistiques) {
+        when (modeTriActuel) {
+            0 -> joueurs // Chronologique
+            1 -> joueurs.sortedBy { it.nomUI.lowercase() } // A-Z
+            2 -> joueurs.sortedByDescending { it.nomUI.lowercase() } // Z-A
+            3 -> { // Gain
+                // Trier TOUS les joueurs, ceux avec stats en premier, ceux sans à la fin
+                joueurs.sortedByDescending { joueur ->
+                    val stats = statistiques[joueur.id]
+                    if (stats != null && joueursAvecHistorique.contains(joueur.id)) {
+                        // Somme des gainNet de toutes les configurations (3, 4, 5 joueurs)
+                        stats.parties.values.sumOf { it.pointsGagnes + it.pointsPerdus}
+                    } else {
+                        Int.MIN_VALUE // Joueurs sans stats à la fin
+                    }
+                }
+            }
+            else -> joueurs
+        }
+    }
+
+    // Libellé du tri actuel
+    val libelleTriActuel = when (modeTriActuel) {
+        0 -> "Chronologique"
+        1 -> "A-Z"
+        2 -> "Z-A"
+        3 -> "Gain"
+        else -> "Chronologique"
     }
 
     // UI
@@ -116,6 +152,17 @@ fun JoueursScreen(
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
 
+            // Indicateur de tri
+            Text(
+                text = "Tri : $libelleTriActuel",
+                fontSize = 16.sp,
+                color = Color(0xFFBBBBBB),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,7 +178,7 @@ fun JoueursScreen(
                             .fillMaxWidth()
                             .background(
                                 color = Color(0xFF333333),
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(50.dp)
                             )
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -140,31 +187,27 @@ fun JoueursScreen(
                         Text(
                             text = joueur.nomUI.take(20),
                             fontSize = 18.sp,
-                            color = if (aHistorique) Color.Gray else Color.White,
+                            color = if (aHistorique) Color.White else Color.Gray,
                             modifier = Modifier
                                 .weight(1f)
-                                .then(
-                                    if (!aHistorique) {
-                                        Modifier.clickable {
-                                            selectedJoueur = joueur
-                                            editNom = TextFieldValue(joueur.nomUI)
-                                            showEditDialog = true
-                                        }
-                                    } else Modifier
-                                )
+                                .clickable {
+                                    selectedJoueur = joueur
+                                    editNom = TextFieldValue(joueur.nomUI)
+                                    showEditDialog = true
+                                }
                         )
 
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                             IconButton(
                                 onClick = { onStatistiquesJoueur(joueur) },
                                 enabled = aHistorique,
-                                modifier = Modifier.size(36.dp) // réduit la "boîte" du bouton
+                                modifier = Modifier.size(36.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.BarChart,
                                     contentDescription = "Statistiques",
                                     tint = if (aHistorique) MaterialTheme.colorScheme.primary else Color.Gray,
-                                    modifier = Modifier.size(18.dp) // réduit l'icône
+                                    modifier = Modifier.size(18.dp)
                                 )
                             }
 
@@ -189,13 +232,11 @@ fun JoueursScreen(
                                     selectedJoueur = joueur
                                     showDeleteDialog = true
                                 },
-                                //enabled = !aHistorique,
                                 modifier = Modifier.size(36.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Supprimer",
-                                    //tint = if (!aHistorique) MaterialTheme.colorScheme.error else Color.Gray,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -223,10 +264,11 @@ fun JoueursScreen(
                 }
 
                 Button(
-                    onClick = { triAlphabetique = !triAlphabetique },
+                    onClick = {
+                        onUpdateModeTriActuel((modeTriActuel + 1) % 4) // MODIFIER ICI
+                    },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        //containerColor = Color(0xFF795548),
                         contentColor = Color.White
                     )
                 ) {
@@ -249,6 +291,8 @@ fun JoueursScreen(
             }
         }
     }
+
+    // ... (les dialogs restent identiques)
 
     if (showEditDialog && selectedJoueur != null) {
         AlertDialog(
@@ -293,7 +337,6 @@ fun JoueursScreen(
         )
     }
 
-    // Dialog d'ajout — appelle onUpdateJoueurs après ajout
     if (showAddDialog) {
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
@@ -371,5 +414,4 @@ fun JoueursScreen(
             dismissButton = {}
         )
     }
-
 }

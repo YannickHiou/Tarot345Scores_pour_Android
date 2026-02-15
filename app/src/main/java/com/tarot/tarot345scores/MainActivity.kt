@@ -141,13 +141,14 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = viewModel()
             val joueurs by viewModel.joueurs.collectAsState()
             val historique by viewModel.historique.collectAsState()
+
+            // Pour générer aléatoirement un fichier Historique.json pour les tests
+            fakeHistorique(constantes, viewModel, filesDir, 1000)
+
             Tarot345ScoresTheme(dynamicColor = true) {
                 Tarot345ScoresApp(constantes, joueurs = joueurs, historique = historique, viewModel)
             }
         }
-
-        // Pour générer aléatoirement un fichier Historique.json pour les tests
-        // fakeHistorique(constantes, filesDir, 10)
     }
 
     /**
@@ -229,6 +230,7 @@ fun Tarot345ScoresApp(
 
     var selectedJoueur by rememberSaveable { mutableStateOf<Joueur?>(null) }
 
+    var modeTriJoueurs by remember { mutableStateOf(0) }
 
     when (currentScreen) {
 
@@ -274,6 +276,8 @@ fun Tarot345ScoresApp(
         is Screen.Joueurs -> JoueursScreen(
             joueurs = joueurs,
             historique = historique,
+            modeTriActuel = modeTriJoueurs,
+            onUpdateModeTriActuel = { modeTriJoueurs = it },
             onUpdateJoueurs = viewModel::updateJoueurs,
             onRetour = {
                 selectedPartieId = null
