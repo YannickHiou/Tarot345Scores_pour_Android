@@ -139,7 +139,7 @@ class MainActivity : ComponentActivity() {
         val constantes = loadConstantesFromAssets(this, "constantes.json")
 
         // Pour générer aléatoirement un fichier Historique.json pour les tests
-        //fakeHistorique(constantes,  filesDir, 10)
+        // fakeHistorique(constantes,  filesDir, 0)
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -316,7 +316,6 @@ fun Tarot345ScoresApp(
                     }
                     acc.toList()
                 }
-
 
             JeuxScreen(
                 joueurs = joueursSelectionnes.value,
@@ -593,36 +592,56 @@ fun Tarot345ScoresApp(
                         )
                     }
 
-                    Button(onClick = {
-                        // Éditer
-                        pendingDonneToEdit = target
-                        pendingDonneReadOnly = false
-                        pendingDonneSubmit = { newDonne ->
-                            val pid = viewModel.currentPartieId.value
-                            if (pid != null) viewModel.editDonne(pid, newDonne)
-                            else viewModel.editDonneLocally(target.id, newDonne)
-                        }
-                        showDonneActionDialog = false
-                        selectedDonneForAction = null
-                        currentScreen = Screen.Donne
-                    }) {
-                        Text("Éditer", color = Color.Black)
+                    Button(
+                        onClick = {
+                            // Éditer
+                            pendingDonneToEdit = target
+                            pendingDonneReadOnly = false
+                            pendingDonneSubmit = { newDonne ->
+                                val pid = viewModel.currentPartieId.value
+                                if (pid != null) viewModel.editDonne(pid, newDonne)
+                                else viewModel.editDonneLocally(target.id, newDonne)
+                            }
+                            showDonneActionDialog = false
+                            selectedDonneForAction = null
+                            currentScreen = Screen.Donne
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Text("Éditer")
                     }
 
-                    Button(onClick = {
-                        showDonneActionDialog = false
-                        viewModel.setCalculData(joueurs = joueursSelectionnes.value, donne = target)
-                        currentScreen = Screen.Calculs
-                        selectedDonneForAction = null
-                    }) {
-                        Text("Calculer", color = Color.Black)
+                    Button(
+                        onClick = {
+                            showDonneActionDialog = false
+                            viewModel.setCalculData(
+                                joueurs = joueursSelectionnes.value,
+                                donne = target
+                            )
+                            currentScreen = Screen.Calculs
+                            selectedDonneForAction = null
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Text("Calculer")
                     }
 
-                    Button(onClick = {
-                        // Supprimer
-                        showDonneActionDialog = false
-                        showDeleteConfirmDialog = true
-                    }) {
+                    Button(
+                        onClick = {
+                            showDonneActionDialog = false
+                            showDeleteConfirmDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
                         Text("Supprimer", color = Color.Black)
                     }
 
@@ -662,29 +681,43 @@ fun Tarot345ScoresApp(
                     contentAlignment = Alignment.Center
                 ) {
                     Row {
-                        TextButton(onClick = {
-                            showDeleteConfirmDialog = false
-                            selectedDonneForAction = null
-                            currentScreen = Screen.Jeux
-                        }) {
-                            Text("Retour", color = Color.White)
+                        Button(
+                            onClick = {
+                                showDeleteConfirmDialog = false
+                                selectedDonneForAction = null
+                                currentScreen = Screen.Jeux
+                            },
+                            modifier = Modifier.width(120.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
+                        ) {
+                            Text("Retour")
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))
 
-                        TextButton(onClick = {
-                            val pid = viewModel.currentPartieId.value
-                            if (pid != null) {
-                                viewModel.deleteDonne(pid, target.id)
-                            } else {
-                                viewModel.deleteDonneLocally(target.id)
-                            }
+                        Button(
+                            onClick = {
+                                val pid = viewModel.currentPartieId.value
+                                if (pid != null) {
+                                    viewModel.deleteDonne(pid, target.id)
+                                } else {
+                                    viewModel.deleteDonneLocally(target.id)
+                                }
 
-                            showDeleteConfirmDialog = false
-                            selectedDonneForAction = null
-                            currentScreen = Screen.Jeux
-                        }) {
-                            Text("Confirmer", color = Color.White)
+                                showDeleteConfirmDialog = false
+                                selectedDonneForAction = null
+                                currentScreen = Screen.Jeux
+                            },
+                            modifier = Modifier.width(120.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
+                        ) {
+                            Text("Confirmer")
                         }
                     }
                 }
@@ -710,26 +743,45 @@ fun Tarot345ScoresApp(
 fun CloturePartiDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Terminer la partie") },
-        confirmButton = {
-            Button(
-                onClick = onConfirm, colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.Black
-                )
+        title = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Oui")
+                Text("Terminer la partie", color = Color.White)
             }
         },
-        dismissButton = {
-            Button(
-                onClick = onDismiss, colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.Black
-                )
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text("Non")
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.width(120.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Text("Non")
+                }
+
+                TextButton(
+                    onClick = onConfirm,
+                    modifier = Modifier.width(120.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Text("Oui")
+                }
             }
-        }
+        },
+        dismissButton = {},
+        containerColor = Color.Black,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(12.dp))
     )
 }

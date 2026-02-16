@@ -20,6 +20,7 @@ package com.tarot.tarot345scores
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Delete
@@ -112,12 +114,13 @@ fun JoueursScreen(
                     val stats = statistiques[joueur.id]
                     if (stats != null && joueursAvecHistorique.contains(joueur.id)) {
                         // Somme des gainNet de toutes les configurations (3, 4, 5 joueurs)
-                        stats.parties.values.sumOf { it.pointsGagnes + it.pointsPerdus}
+                        stats.parties.values.sumOf { it.pointsGagnes + it.pointsPerdus }
                     } else {
                         Int.MIN_VALUE // Joueurs sans stats à la fin
                     }
                 }
             }
+
             else -> joueurs
         }
     }
@@ -197,7 +200,10 @@ fun JoueursScreen(
                                 }
                         )
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             IconButton(
                                 onClick = { onStatistiquesPartieJoueur(joueur) },
                                 enabled = aHistorique,
@@ -258,7 +264,10 @@ fun JoueursScreen(
                 Button(
                     onClick = onRetour,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Retour", color = Color.Black)
                 }
@@ -269,7 +278,8 @@ fun JoueursScreen(
                     },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.White
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
                     )
                 ) {
                     Text("Trier", color = Color.Black)
@@ -298,11 +308,18 @@ fun JoueursScreen(
         AlertDialog(
             onDismissRequest = { showEditDialog = false },
             title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Modifier le joueur", color = Color.White)
+                }
+            },
+            text = {
                 TextField(
                     value = editNom,
                     onValueChange = { editNom = it },
                     singleLine = true,
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
                     label = { Text("Nom du joueur") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -312,11 +329,17 @@ fun JoueursScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    TextButton(onClick = { showEditDialog = false }) {
+                    Button(
+                        onClick = { showEditDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
                         Text("Annuler")
                     }
 
-                    TextButton(
+                    Button(
                         onClick = {
                             val raw = editNom.text.trim()
                             if (raw.isNotEmpty() && selectedJoueur != null) {
@@ -327,20 +350,34 @@ fun JoueursScreen(
                             }
                             showEditDialog = false
                         },
-                        enabled = editNom.text.trim().isNotEmpty()
+                        enabled = editNom.text.trim().isNotEmpty(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Valider")
                     }
                 }
             },
-            dismissButton = {}
+            dismissButton = {},
+            containerColor = Color.Black,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(12.dp))
         )
     }
 
     if (showAddDialog) {
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("Nouveau joueur") },
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Nouveau joueur", color = Color.White)
+                }
+            },
             text = {
                 TextField(
                     value = newNom,
@@ -355,11 +392,17 @@ fun JoueursScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    TextButton(onClick = { showAddDialog = false }) {
+                    Button(
+                        onClick = { showAddDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
                         Text("Annuler")
                     }
 
-                    TextButton(
+                    Button(
                         onClick = {
                             val raw = newNom.text.trim()
                             if (raw.isNotEmpty()) {
@@ -371,13 +414,21 @@ fun JoueursScreen(
                             }
                             showAddDialog = false
                         },
-                        enabled = newNom.text.trim().isNotEmpty()
+                        enabled = newNom.text.trim().isNotEmpty(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Valider")
                     }
                 }
             },
-            dismissButton = {}
+            dismissButton = {},
+            containerColor = Color.Black,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(12.dp))
+
         )
     }
 
@@ -386,18 +437,33 @@ fun JoueursScreen(
 
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Confirmer la suppression") },
-            text = { Text("\"${joueurASupprimer?.nomUI}\" sera supprimé") },
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Confirmer la suppression", color = Color.White)
+                }
+            },
+            text = {
+                Text("${joueurASupprimer?.nomUI}", color = Color.White)
+            },
             confirmButton = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    TextButton(onClick = { showDeleteDialog = false }) {
+                    Button(
+                        onClick = { showDeleteDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) {
                         Text("Annuler")
                     }
 
-                    TextButton(
+                    Button(
                         onClick = {
                             selectedJoueur?.let { joueur ->
                                 val updated = joueurs.filter { it != joueur }
@@ -405,13 +471,19 @@ fun JoueursScreen(
                             }
                             showDeleteDialog = false
                         },
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Supprimer")
                     }
                 }
             },
-            dismissButton = {}
+            dismissButton = {},
+            containerColor = Color.Black,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.border(1.dp, Color.White, RoundedCornerShape(12.dp))
         )
     }
 }

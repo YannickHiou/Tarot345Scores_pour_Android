@@ -29,7 +29,9 @@ import java.util.UUID
 
 private const val HISTO_FILENAME = "historique.json"
 private const val JOUEURS_FILENAME = "joueurs.json"
-const val JEUX_COULEUR = 0XFF000000 //0xFF00BCD4
+const val JEUX_COULEUR = 0xff000000 //0xFF00BCD4
+const val BOUTON_COULEUR = 0xffb6caff // 0xffffff00
+const val JOUEUR_SELECTIONNE =  0xff2e7d32
 
 private val json = Json { var prettyPrint = true; encodeDefaults = true }
 
@@ -81,9 +83,14 @@ suspend fun deleteDonneInHistorique(
     donneId: String
 ): Historique {
     val hist = loadHistorique(context)
-    val updatedParties = hist.parties.map { p ->
+    val updatedParties = hist.parties.mapNotNull { p ->
         if (p.id == partieId) {
-            p.copy(donnes = p.donnes.filterNot { it.id == donneId } as MutableList<Donne>)
+            val donnesRestantes = p.donnes.filterNot { it.id == donneId }
+            if (donnesRestantes.isEmpty()) {
+                null
+            } else {
+                p.copy(donnes = donnesRestantes as MutableList<Donne>)
+            }
         } else p
     }
     val newHist = hist.copy(parties = updatedParties as MutableList<Partie>)

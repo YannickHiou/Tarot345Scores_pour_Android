@@ -309,6 +309,10 @@ fun HistoriqueScreen(
             ) {
                 Button(
                     onClick = onBack,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    ),
                     border = BorderStroke(1.dp, Color.White)
                 ) {
                     Text("Retour")
@@ -392,7 +396,11 @@ fun HistoriqueScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text("Année $year")
                                 }
@@ -407,7 +415,11 @@ fun HistoriqueScreen(
                     ) {
                         Button(
                             onClick = onBack,
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Accueil") }
                     }
                 }
@@ -437,13 +449,21 @@ fun HistoriqueScreen(
                                         nbJoueursFiltre = null
                                         navState = HState.Years
                                     },
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text("Retour")
                                 }
                                 Button(
                                     onClick = onBack,
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) { Text("Accueil") }
                             }
                         }
@@ -472,6 +492,10 @@ fun HistoriqueScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text(getMonthName(month))
                                 }
@@ -485,13 +509,21 @@ fun HistoriqueScreen(
                     ) {
                         Button(
                             onClick = { navState = HState.Years },
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) {
                             Text("Retour")
                         }
                         Button(
                             onClick = onBack,
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Accueil") }
                     }
                 }
@@ -529,13 +561,21 @@ fun HistoriqueScreen(
                                             navState = HState.Months(s.year)
                                         }
                                     },
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text("Retour")
                                 }
                                 Button(
                                     onClick = onBack,
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) { Text("Accueil") }
                             }
                         }
@@ -556,6 +596,10 @@ fun HistoriqueScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text("$day ${getMonthName(s.month)} ${s.year}")
                                 }
@@ -576,13 +620,21 @@ fun HistoriqueScreen(
                                     navState = HState.Months(s.year)
                                 }
                             },
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) {
                             Text("Retour")
                         }
                         Button(
                             onClick = onBack,
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Accueil") }
                     }
                 }
@@ -613,11 +665,11 @@ fun HistoriqueScreen(
                             ) {
                                 Button(
                                     onClick = { nbJoueursFiltre = null },
+                                    border = BorderStroke(1.dp, Color.White),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (nbJoueursFiltre == null) MaterialTheme.colorScheme.primary else Color.DarkGray,
-                                        contentColor = Color.White
+                                        containerColor = if (nbJoueursFiltre == null) Color(BOUTON_COULEUR) else Color.DarkGray,
+                                        contentColor = if (nbJoueursFiltre == null) Color.Black else Color.White
                                     ),
-                                    border = BorderStroke(1.dp, Color.White)
                                 ) {
                                     Text("Tous")
                                 }
@@ -625,11 +677,11 @@ fun HistoriqueScreen(
                                 categoriesDisponibles.forEach { nb ->
                                     Button(
                                         onClick = { nbJoueursFiltre = nb },
+                                        border = BorderStroke(1.dp, Color.White),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (nbJoueursFiltre == nb) MaterialTheme.colorScheme.primary else Color.DarkGray,
-                                            contentColor = Color.White
+                                            containerColor = if (nbJoueursFiltre == nb) Color(BOUTON_COULEUR) else Color.DarkGray,
+                                            contentColor = if (nbJoueursFiltre == nb) Color.Black else Color.White
                                         ),
-                                        border = BorderStroke(1.dp, Color.White)
                                     ) {
                                         Text("$nb joueurs")
                                     }
@@ -674,13 +726,21 @@ fun HistoriqueScreen(
                                             navState = HState.Days(s.year, s.month)
                                         }
                                     },
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) {
                                     Text("Retour")
                                 }
                                 Button(
                                     onClick = onBack,
-                                    modifier = Modifier.padding(4.dp)
+                                    modifier = Modifier.padding(4.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(BOUTON_COULEUR),
+                                        contentColor = Color.Black
+                                    )
                                 ) { Text("Accueil") }
                             }
                         }
@@ -690,6 +750,7 @@ fun HistoriqueScreen(
                                 Surface(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .height(48.dp)
                                         .padding(vertical = 4.dp)
                                         .clickable(
                                             onClick = {
@@ -699,7 +760,7 @@ fun HistoriqueScreen(
                                         ),
                                     tonalElevation = 2.dp,
                                     shape = RoundedCornerShape(percent = 50),
-                                    color = MaterialTheme.colorScheme.primaryContainer
+                                    color = Color(BOUTON_COULEUR)
                                 ) {
                                     val dateStr = try {
                                         sdf.format(Date(partie.createdAt))
@@ -712,8 +773,8 @@ fun HistoriqueScreen(
                                     ) {
                                         Text(
                                             text = dateStr,
-                                            modifier = Modifier.padding(16.dp),
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            modifier = Modifier.padding(2.dp),
+                                            color = Color.Black,
                                         )
                                     }
                                 }
@@ -795,13 +856,21 @@ fun HistoriqueScreen(
                                     navState = HState.Days(s.year, s.month)
                                 }
                             },
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) {
                             Text("Retour")
                         }
                         Button(
                             onClick = onBack,
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier.padding(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Accueil") }
                     }
                 }
@@ -844,23 +913,36 @@ fun ActionOnPartieDialog(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             onClick = { onReprendre(partie) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Reprendre") }
 
                         Button(
                             onClick = { showConfirmDialog = true },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Supprimer") }
 
                         Button(
                             onClick = { onStatistiques(partie) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(BOUTON_COULEUR),
+                                contentColor = Color.Black
+                            )
                         ) { Text("Statistiques") }
 
                         TextButton(
                             onClick = onRetour,
                             modifier = Modifier.fillMaxWidth()
-                        ) { Text("Retour") }
+
+                        ) { Text("Retour", color=Color.White) }
                     }
                 }
             }
@@ -910,12 +992,20 @@ fun ConfirmDeleteDialog(
                 ) {
                     Button(
                         onClick = onDismiss,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) { Text("Non") }
 
                     Button(
                         onClick = onConfirm,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) { Text("Oui") }
                 }
             }

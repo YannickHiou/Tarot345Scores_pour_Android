@@ -111,7 +111,7 @@ fun AccueilScreen(
         Button(
             onClick = onAproposClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
         )
@@ -125,7 +125,7 @@ fun AccueilScreen(
             onClick = onJouerClick,
             enabled = canStart,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (joueurs.size >= requiredNbJoueurs_) Color.Green else MaterialTheme.colorScheme.primary,
+                containerColor = if (joueurs.size >= requiredNbJoueurs_) Color.Green else Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
         ) {
@@ -137,7 +137,7 @@ fun AccueilScreen(
         Button(
             onClick = onJoueursClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (joueurs.size < requiredNbJoueurs_) Color.Green else MaterialTheme.colorScheme.primary,
+                containerColor = if (joueurs.size < requiredNbJoueurs_) Color.Green else Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
 
@@ -148,7 +148,7 @@ fun AccueilScreen(
         Button(
             onClick = onHistoriqueClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
         )
@@ -160,25 +160,26 @@ fun AccueilScreen(
         Button(
             onClick = onStatistiquesClick,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
-
         ) { Text("Statistiques") }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = onConstantesClick, colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+            onClick = onConstantesClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
         ) { Text("Constantes") }
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = onReglesClick, colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+            onClick = onReglesClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(BOUTON_COULEUR),
                 contentColor = Color.Black
             )
         ) { Text("Règles") }

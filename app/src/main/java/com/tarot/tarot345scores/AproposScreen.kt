@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun AproposScreen(onBack: () -> Unit) {
@@ -218,7 +220,13 @@ fun AproposScreen(onBack: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = onBack) {
+            Button(
+                onClick = onBack,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(BOUTON_COULEUR),
+                    contentColor = Color.Black
+                )
+            ) {
                 Text("Retour")
             }
         }
@@ -234,18 +242,24 @@ fun AproposScreen(onBack: () -> Unit) {
                 Text(
                     text =
                         "Il est distribué sous licence GNU GPL v3, une licence de logiciel libre " +
-                        "à copyleft fort : toute copie ou modification du code source original " +
-                        "doit être redistribuée sous la même licence GPL v3.\n\n" +
-                        "Vous pouvez utiliser ce code librement, l'étudier, l'enrichir ou y " +
-                        "apporter des modifications importantes, puis distribuer vos versions " +
-                        "modifiées, à condition de conserver cette licence et de fournir le code source.\n\n" +
-                        "Note : Le logo \"Tarot 345 Scores\" reste la propriété de Yannick Hiou " +
-                        "et n'est pas couvert par la GPL v3. Son utilisation nécessite une autorisation explicite.",
+                                "à copyleft fort : toute copie ou modification du code source original " +
+                                "doit être redistribuée sous la même licence GPL v3.\n\n" +
+                                "Vous pouvez utiliser ce code librement, l'étudier, l'enrichir ou y " +
+                                "apporter des modifications importantes, puis distribuer vos versions " +
+                                "modifiées, à condition de conserver cette licence et de fournir le code source.\n\n" +
+                                "Note : Le logo \"Tarot 345 Scores\" reste la propriété de Yannick Hiou " +
+                                "et n'est pas couvert par la GPL v3. Son utilisation nécessite une autorisation explicite.",
                     fontSize = 14.sp
                 )
             },
             confirmButton = {
-                Button(onClick = { showLicenseDialog = false }) {
+                Button(
+                    onClick = { showLicenseDialog = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
+                ) {
                     Text("Fermer")
                 }
             }

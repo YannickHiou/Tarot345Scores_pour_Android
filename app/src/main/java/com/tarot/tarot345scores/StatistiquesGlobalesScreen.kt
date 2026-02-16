@@ -115,7 +115,11 @@ fun StatistiquesGlobalesScreen(
                 ) {
                     Button(
                         onClick = onNavigateBack,
-                        border = BorderStroke(1.dp, Color.White)
+                        border = BorderStroke(1.dp, Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Retour")
                     }
@@ -153,8 +157,8 @@ fun StatistiquesGlobalesScreen(
                             Button(
                                 onClick = { nbJoueursFiltre = null },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (nbJoueursFiltre == null) MaterialTheme.colorScheme.primary else Color.DarkGray,
-                                    contentColor = Color.White
+                                    containerColor = if (nbJoueursFiltre == null) Color(BOUTON_COULEUR) else Color.DarkGray,
+                                    contentColor =  if (nbJoueursFiltre == null)  Color.Black else Color.White
                                 ),
                                 border = BorderStroke(1.dp, Color.White)
                             ) {
@@ -165,8 +169,8 @@ fun StatistiquesGlobalesScreen(
                                 Button(
                                     onClick = { nbJoueursFiltre = nb },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (nbJoueursFiltre == nb) MaterialTheme.colorScheme.primary else Color.DarkGray,
-                                        contentColor = Color.White
+                                        containerColor = if (nbJoueursFiltre == nb) Color(BOUTON_COULEUR) else Color.DarkGray,
+                                        contentColor = if (nbJoueursFiltre == nb) Color.Black else Color.White
                                     ),
                                     border = BorderStroke(1.dp, Color.White)
                                 ) {
@@ -321,7 +325,11 @@ fun StatistiquesGlobalesScreen(
                 ) {
                     Button(
                         onClick = onNavigateBack,
-                        border = BorderStroke(1.dp, Color.White)
+                        border = BorderStroke(1.dp, Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Retour")
                     }

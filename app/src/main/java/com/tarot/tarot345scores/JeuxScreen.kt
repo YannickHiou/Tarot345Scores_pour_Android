@@ -209,7 +209,7 @@ fun JeuxScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Color(BOUTON_COULEUR),
                         contentColor = Color.Black
                     ),
                     modifier = Modifier.weight(1f)
@@ -224,7 +224,7 @@ fun JeuxScreen(
                         onClick = onNouvelleDonne,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                            containerColor = Color(BOUTON_COULEUR),
                             contentColor = Color.Black
                         )
                     ) {
@@ -233,6 +233,7 @@ fun JeuxScreen(
                 }
             }
         }
+
 
         LaunchedEffect(longPressDonne) {
             longPressDonne?.let { targetDonne ->
@@ -250,7 +251,7 @@ fun HeaderRow(joueurs: List<Joueur>) {
         modifier = Modifier
             .fillMaxWidth()
             .height(30.dp)
-            .background(Color(0xffb6caff))
+            .background(Color(BOUTON_COULEUR))
     ) {
         joueurs.forEach { joueur ->
             Box(

@@ -63,7 +63,9 @@ fun ChoixJoueursScreen(
 
         // Trier + espace (toggle)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(onClick = { sortAsc = !sortAsc }) {
+            TextButton(
+                onClick = { sortAsc = !sortAsc },
+            ) {
                 Text(text = if (sortAsc) "Trier A→Z" else "Trier Z→A", color = Color.White)
             }
         }
@@ -89,12 +91,16 @@ fun ChoixJoueursScreen(
         ) {
             Button(
                 onClick = onRetour,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(BOUTON_COULEUR),
+                    contentColor = Color.Black
+                )
             ) {
                 Text(text = "Retour")
             }
 
-            val isSelected = selected.size >=3 && selected.size <= 5
+            val isSelected = selected.size >= 3 && selected.size <= 5
             Button(
                 onClick = {
                     if (isSelected) {
@@ -102,13 +108,13 @@ fun ChoixJoueursScreen(
                     }
                 },
                 enabled = isSelected,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSelected) Color(0xFF2E7D32) else Color(0xFFD32F2F),
-                    contentColor = Color.White
-                ),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isSelected) Color(JOUEUR_SELECTIONNE) else Color(BOUTON_COULEUR),
+                    contentColor = Color.White
+                ),
             ) {
                 Text(text = "Valider")
             }
@@ -145,11 +151,14 @@ fun choixJoueurs(
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 colors = if (isSelected) {
                     ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32),
+                        containerColor = Color(JOUEUR_SELECTIONNE),
                         contentColor = Color.White
                     )
                 } else {
-                    ButtonDefaults.buttonColors()
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
                 }
             ) {
                 Text(

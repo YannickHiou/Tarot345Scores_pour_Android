@@ -38,6 +38,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -502,7 +504,13 @@ fun CalculsScreen(
                         .padding(top = 8.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(onClick = onDismiss) { Text("Retour") }
+                    Button(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
+                    ) { Text("Retour") }
                 }
             }
         }
@@ -582,7 +590,7 @@ fun afficherScoresTableLigneEntete(
                     fontSize = cellFontSize,
                     weight = 1f,
                     cellHeight = rowHeight,
-                    backgroundColor = Color(0xffb6caff),
+                    backgroundColor = Color(BOUTON_COULEUR),
                     textColor = Color.Black
                 )
             }

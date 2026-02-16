@@ -71,6 +71,7 @@ import androidx.compose.ui.window.Dialog
 import java.util.UUID
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.*
@@ -255,7 +256,11 @@ fun DonneScreen(
                     onClick = onCancel,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = if (isReadOnly) 0.dp else 8.dp)
+                        .padding(end = if (isReadOnly) 0.dp else 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
                 ) { Text("Retour") }
 
                 if (!isReadOnly) {
@@ -264,7 +269,11 @@ fun DonneScreen(
                         onClick = { showConfirmDialog = true },
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 8.dp)
+                            .padding(start = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) { Text("Soumettre") }
                 }
             }
@@ -423,12 +432,18 @@ fun ButtonWithResponse(buttonText: String, responseText: String?, onClick: () ->
             .padding(12.dp)
             .fillMaxWidth()
     ) {
-        Button(onClick = onClick) { Text(buttonText) }
+        Button(
+            onClick = onClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(BOUTON_COULEUR),
+                contentColor = Color.Black
+            )
+        ) { Text(buttonText) }
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = responseText ?: "Non sélectionné", color = Color.White, fontSize = 18.sp)
     }
 }
-
+/*
 @Composable
 fun <T> RadioRow(
     label: String,
@@ -455,7 +470,8 @@ fun <T> RadioRow(
         Text(label, color = Color.White)
     }
 }
-
+*/
+/*
 @Composable
 fun ContratRadio(
     label: String,
@@ -485,7 +501,7 @@ fun ChelemRadio(
         onSelect = onSelect
     )
 }
-
+*/
 @Composable
 fun joueurIndexSelectionDialog(
     title: String,
@@ -506,7 +522,14 @@ fun joueurIndexSelectionDialog(
                 .wrapContentHeight()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = title, fontSize = 18.sp, color = Color.White)
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = title,
+                    fontSize = 18.sp,
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
                 joueurs.forEachIndexed { index, joueur ->
@@ -548,7 +571,9 @@ fun joueurIndexSelectionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                    ) {
                         Text("Fermer", color = Color.White)
 
                     }
@@ -631,7 +656,9 @@ fun ContratSelectionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                    ) {
                         Text("Fermer", color = Color.White)
                     }
                 }
@@ -691,7 +718,8 @@ fun PetitAuBoutDialogIndex(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = joueur.nomUI,
+                            Text(
+                                text = joueur.nomUI,
                                 modifier = Modifier.weight(1f),
                                 color = Color.White
                             )
@@ -712,7 +740,9 @@ fun PetitAuBoutDialogIndex(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                    ) {
                         Text("Fermer", color = Color.White)
                     }
                 }
@@ -838,13 +868,15 @@ fun PoigneesDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                    ) {
                         Text("Annuler", color = Color.White)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(
                         onClick = { onFinish(selectionsPoignees.toList()) },
-                        enabled = total <= maxAllowed
+                        enabled = total <= maxAllowed,
                     ) {
                         Text("Fermer", color = Color.White)
                     }
@@ -927,7 +959,9 @@ fun ChelemSelectionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                    ) {
                         Text("Fermer", color = Color.White)
                     }
                 }
@@ -958,7 +992,7 @@ fun NbBoutSelection(
                     onClick = { onAtqBoutChange(value) },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.DarkGray,
+                        containerColor = if (isSelected) Color(BOUTON_COULEUR) else Color.DarkGray,
                         contentColor = Color.White
                     ),
                     contentPadding = PaddingValues(0.dp),
@@ -974,7 +1008,7 @@ fun NbBoutSelection(
                             text = value.toString(),
                             color = Color.White,
                             textAlign = TextAlign.Center,
-                            fontSize = 20.sp,           // number fills the button
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -1100,7 +1134,12 @@ fun PointsNumberPickers(
                 },
                 valueRange = 0f..totalMax.toFloat(),
                 steps = totalMax - 1,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color(BOUTON_COULEUR),
+                    activeTrackColor = Color(BOUTON_COULEUR),
+                    inactiveTrackColor = Color.Gray
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -1289,6 +1328,7 @@ fun ConfirmDialogIndex(
                     val nom = joueurs.getOrNull(poignee.index)?.nomUI ?: "?"
                     "Poignée: $nom:${poignee.type}"
                 }
+
                 else -> {
                     val items = nonEmpty.joinToString(", ") {
                         "${joueurs.getOrNull(it.index)?.nomUI ?: "?"}:${it.type}"
@@ -1403,12 +1443,11 @@ fun ConfirmDialogIndex(
                     onDismiss()
                 },
                 enabled = isButtonEnabled,
+                border = BorderStroke(1.dp, Color.White),
                 colors = ButtonDefaults.buttonColors(
-                    disabledContentColor = Color.LightGray,
-                    //containerColor = Color.Black,
-                    //contentColor = Color.White,
-                ),
-                border = BorderStroke(1.dp, Color.White)
+                    containerColor = Color(BOUTON_COULEUR),
+                    contentColor = Color.Black
+                )
             ) {
                 Text("Valider", color = Color.Black)
             }
@@ -1416,11 +1455,11 @@ fun ConfirmDialogIndex(
         dismissButton = {
             Button(
                 onClick = onDismiss,
+                border = BorderStroke(1.dp, Color.White),
                 colors = ButtonDefaults.buttonColors(
-                    //containerColor = Color.Black,
+                    containerColor = Color(BOUTON_COULEUR),
                     contentColor = Color.Black
-                ),
-                border = BorderStroke(1.dp, Color.White)
+                )
             ) {
                 Text("Annuler", color = Color.Black)
             }

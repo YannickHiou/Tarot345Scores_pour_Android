@@ -33,6 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
@@ -162,19 +164,29 @@ fun ConstantesScreen(
                 .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = onBack) {
+            Button(
+                onClick = onBack,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(BOUTON_COULEUR),
+                    contentColor = Color.Black
+                )
+            ) {
                 Text("Retour")
             }
         }
     }
 }
+
 @Composable
 fun PoigneeTableDirect(constantes: ConstantesConfig) {
     val cols = constantes.poignee_atouts.keys.sortedBy { it.toInt() }
     val types = listOf("SIMPLE", "DOUBLE", "TRIPLE")
     val cellFontSize = 12.sp
 
-    Column(Modifier.fillMaxWidth().background(Color.Black).padding(8.dp)) {
+    Column(Modifier
+        .fillMaxWidth()
+        .background(Color.Black)
+        .padding(8.dp)) {
         Row(Modifier.fillMaxWidth()) {
             Cell("Joueurs", cellFontSize, weight = 2f) // ← Première colonne plus large
             cols.forEach { Cell(it, cellFontSize, weight = 1f) }

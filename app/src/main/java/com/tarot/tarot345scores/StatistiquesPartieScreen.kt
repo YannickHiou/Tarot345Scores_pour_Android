@@ -66,7 +66,7 @@ fun StatistiquesPartieScreen(
     onNavigateBack: () -> Unit,
     onNavigateToJoueur: (Joueur) -> Unit,
     onConsulterPartie: (String) -> Unit,
-    onRecreateJoueur:(Joueur) -> Unit
+    onRecreateJoueur: (Joueur) -> Unit
 ) {
     val partie = remember(historique, partieId) {
         historique.parties.find { it.id == partieId }
@@ -128,7 +128,11 @@ fun StatistiquesPartieScreen(
                     )
                     Button(
                         onClick = onNavigateBack,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(BOUTON_COULEUR),
+                            contentColor = Color.Black
+                        )
                     ) {
                         Text("Retour")
                     }
@@ -180,7 +184,8 @@ fun StatistiquesPartieScreen(
 
                                 var showJoueurSupprimeDialog by remember { mutableStateOf(false) }
 
-                                val joueurGlobal: Joueur? = joueursGlobal.find { it.id == joueur.id }
+                                val joueurGlobal: Joueur? =
+                                    joueursGlobal.find { it.id == joueur.id }
 
                                 Row(
                                     modifier = Modifier
@@ -202,8 +207,8 @@ fun StatistiquesPartieScreen(
                                             .width(140.dp),
                                         contentPadding = PaddingValues(8.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.primary,
-                                            contentColor = Color.White
+                                            containerColor = Color(BOUTON_COULEUR),
+                                            contentColor = Color.Black
                                         ),
                                         border = BorderStroke(1.dp, Color.White)
                                     ) {
@@ -225,12 +230,18 @@ fun StatistiquesPartieScreen(
                                 }
 
                                 if (showJoueurSupprimeDialog) {
-                                    Dialog(onDismissRequest = { showJoueurSupprimeDialog = false }) {
+                                    Dialog(onDismissRequest = {
+                                        showJoueurSupprimeDialog = false
+                                    }) {
                                         Surface(
                                             shape = RoundedCornerShape(8.dp),
                                             color = Color.Black, // fond noir
                                             modifier = Modifier
-                                                .border(1.dp, Color.White, RoundedCornerShape(8.dp)) // trait blanc collé au fond noir
+                                                .border(
+                                                    1.dp,
+                                                    Color.White,
+                                                    RoundedCornerShape(8.dp)
+                                                ) // trait blanc collé au fond noir
                                         ) {
                                             Column(modifier = Modifier.padding(12.dp)) { // padding intérieur pour le contenu seulement
                                                 Text(
@@ -246,13 +257,27 @@ fun StatistiquesPartieScreen(
                                                     horizontalArrangement = Arrangement.End,
                                                     modifier = Modifier.fillMaxWidth()
                                                 ) {
-                                                    TextButton(onClick = { showJoueurSupprimeDialog = false }) {
+                                                    TextButton(
+                                                        onClick = {
+                                                            showJoueurSupprimeDialog = false
+                                                        },
+                                                        colors = ButtonDefaults.buttonColors(
+                                                            containerColor = Color(BOUTON_COULEUR),
+                                                            contentColor = Color.Black
+                                                        )
+                                                    ) {
                                                         Text("OK", color = Color.White)
                                                     }
-                                                    TextButton(onClick = {
-                                                        showJoueurSupprimeDialog = false
-                                                        onRecreateJoueur(joueur)
-                                                    }) {
+                                                    TextButton(
+                                                        onClick = {
+                                                            showJoueurSupprimeDialog = false
+                                                            onRecreateJoueur(joueur)
+                                                        },
+                                                        colors = ButtonDefaults.buttonColors(
+                                                            containerColor = Color(BOUTON_COULEUR),
+                                                            contentColor = Color.Black
+                                                        )
+                                                    ) {
                                                         Text("Re Créer", color = Color.White)
                                                     }
                                                 }
@@ -376,7 +401,11 @@ fun StatistiquesPartieScreen(
                 Button(
                     onClick = onNavigateBack,
                     modifier = Modifier.padding(start = 8.dp),
-                    border = BorderStroke(1.dp, Color.White)
+                    border = BorderStroke(1.dp, Color.White),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(BOUTON_COULEUR),
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Retour")
                 }

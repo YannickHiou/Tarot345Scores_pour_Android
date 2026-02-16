@@ -197,7 +197,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             _historique.value = newHist
             val partie = newHist.parties.firstOrNull { it.id == partieId }
-            _allDonnes.value = partie?.donnes?.toList() ?: emptyList()
+            if (partie != null) {
+                _allDonnes.value = partie.donnes.toList()
+            } else {
+                _allDonnes.value = emptyList()
+                _currentPartieId.value = ""
+            }
         }
     }
 
