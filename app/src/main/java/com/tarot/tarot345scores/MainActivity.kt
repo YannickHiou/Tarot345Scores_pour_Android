@@ -80,7 +80,7 @@ sealed class Screen {
     object Historique : Screen()
     object Apropos : Screen()
     object StatistiquesGlobales : Screen()
-    object StatistiquesJoueurs : Screen()
+    object StatistiquesPartieJoueurs : Screen()
     object StatistiquesPartie : Screen()
     object Constantes : Screen()
     object Calculs : Screen()
@@ -97,7 +97,7 @@ val ScreenSaver = Saver<Screen, String>(
             is Screen.Historique -> "Historique"
             is Screen.Apropos -> "A propos"
             is Screen.StatistiquesGlobales -> "StatistiquesGlobales"
-            is Screen.StatistiquesJoueurs -> "StatistiquesJoueurs"
+            is Screen.StatistiquesPartieJoueurs -> "StatistiquesPartieJoueurs"
             is Screen.StatistiquesPartie -> "StatistiquesPartie"
             is Screen.Constantes -> "Constantes"
             is Screen.Calculs -> "Calculs"
@@ -113,7 +113,7 @@ val ScreenSaver = Saver<Screen, String>(
             "Historique" -> Screen.Historique
             "A propos" -> Screen.Apropos
             "StatistiquesGlobales" -> Screen.StatistiquesGlobales
-            "StatistiquesJoueurs" -> Screen.StatistiquesJoueurs
+            "StatistiquesPartieJoueurs" -> Screen.StatistiquesPartieJoueurs
             "StatistiquesPartie" -> Screen.StatistiquesPartie
             "Constantes" -> Screen.Constantes
             "Calculs" -> Screen.Calculs
@@ -139,7 +139,7 @@ class MainActivity : ComponentActivity() {
         val constantes = loadConstantesFromAssets(this, "constantes.json")
 
         // Pour générer aléatoirement un fichier Historique.json pour les tests
-        //fakeHistorique(constantes,  filesDir, 0)
+        //fakeHistorique(constantes,  filesDir, 10)
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -290,10 +290,10 @@ fun Tarot345ScoresApp(
                 selectedPartieId = null
                 currentScreen = Screen.Accueil
             },
-            onStatistiquesJoueur = { joueur ->
+            onStatistiquesPartieJoueur = { joueur ->
                 selectedJoueur = joueur
                 selectedPartieId = null
-                currentScreen = Screen.StatistiquesJoueurs
+                currentScreen = Screen.StatistiquesPartieJoueurs
             },
             onContinuer = {
                 isPartieEnCours = true
@@ -481,7 +481,7 @@ fun Tarot345ScoresApp(
                 },
                 onNavigateToJoueur = { joueur ->
                     selectedJoueur = joueur
-                    currentScreen = Screen.StatistiquesJoueurs
+                    currentScreen = Screen.StatistiquesPartieJoueurs
                 },
                 onConsulterPartie = { id ->
                     val navigateWithPartie: (Partie) -> Unit = { partie ->
@@ -507,7 +507,7 @@ fun Tarot345ScoresApp(
             )
         }
 
-        is Screen.StatistiquesJoueurs -> {
+        is Screen.StatistiquesPartieJoueurs -> {
             if (historique == null || selectedJoueur == null) {
                 Box(
                     modifier = Modifier
@@ -522,7 +522,7 @@ fun Tarot345ScoresApp(
                 val joueurValue = selectedJoueur
 
                 if (historiqueValue != null && joueurValue != null) {
-                    StatistiquesJoueursScreen(
+                    StatistiquesPartieJoueursScreen(
                         historique = historiqueValue,
                         joueur = joueurValue,
                         onNavigateBack = {

@@ -18,7 +18,7 @@
 
 package com.tarot.tarot345scores
 
-data class StatistiquesPartieJoueur(
+data class StatistiquesJoueur(
     val contrats: List<Int>, // [PETITE, GARDE, GARDE_SANS, GARDE_CONTRE]
     val poignees: List<Int>, // [NONE, SIMPLE, DOUBLE, TRIPLE]
     val chelems: List<Int>, // [NON_ANNONCE_REUSSI, ANNONCE_RATE, ANNONCE_REUSSI]
@@ -34,10 +34,12 @@ data class StatistiquesPartieJoueur(
     val pointsPerdus: Int,
     val meilleurScore: Int,
     val pireScore: Int,
+    val donnesGagnees: Int,
+    val partiesGagnees: Int,
 )
 
-data class StatistiquesJoueur(
-    val parties: MutableMap<Int, StatistiquesPartieJoueur> = mutableMapOf()
+data class StatistiquesPartieJoueur(
+    val parties: MutableMap<Int, StatistiquesJoueur> = mutableMapOf()
 )
 
 data class StatistiquesPartie(
@@ -52,7 +54,7 @@ data class StatistiquesPartie(
     val pireScore: Int,
     val partieContrats: List<Int>,
     val partiePoignees: List<Int>,
-    val partieChelems: List<Int>
+    val partieChelems: List<Int>,
 )
 
 data class StatistiquesGlobales(
@@ -85,9 +87,9 @@ class AnalyseurHistorique {
 
     fun analyser(
         historique: Historique
-    ): Triple<Map<String, StatistiquesJoueur>, List<StatistiquesPartie>, StatistiquesGlobales> {
+    ): Triple<Map<String, StatistiquesPartieJoueur>, List<StatistiquesPartie>, StatistiquesGlobales> {
 
-        val joueurs = mutableMapOf<String, MutableStatistiquesJoueur>()
+        val joueurs = mutableMapOf<String, MutableStatistiquesPartieJoueur>()
         val parties = mutableListOf<StatistiquesPartie>()
         val globales = MutableStatistiquesGlobales()
 
@@ -98,7 +100,7 @@ class AnalyseurHistorique {
             for (joueur in partie.joueurs) {
                 val joueurId = joueur.id
                 if (!joueurs.containsKey(joueurId)) {
-                    joueurs[joueurId] = MutableStatistiquesJoueur()
+                    joueurs[joueurId] = MutableStatistiquesPartieJoueur()
                 }
                 joueurs[joueurId]!!.parties[nbJoueurs]!!.totalParties += 1
                 joueurs[joueurId]!!.parties[nbJoueurs]!!.totalDonnes += partie.donnes.size
@@ -116,7 +118,6 @@ class AnalyseurHistorique {
             var partieMiseres = 0
             var partiePetitAuBoutGagne = 0
             var partiePetitAuBoutPerdu = 0
-
 
             for (donne in partie.donnes) {
                 // PRENEUR
@@ -156,6 +157,7 @@ class AnalyseurHistorique {
                     if (score >= 0) {
                         joueurStats.pointsGagnes += score
                         partiePointsGagnes += score
+                        joueurStats.donnesGagnees += 1
                     } else {
                         joueurStats.pointsPerdus += score
                         partiePointsPerdus += score
@@ -234,7 +236,6 @@ class AnalyseurHistorique {
                     partieChelems[idxChelem]++
                 }
 
-
                 for (poignee in donne.poignees) {
                     if (poignee.type != PoigneeType.NONE) {
                         val joueurIndex = poignee.index
@@ -245,6 +246,29 @@ class AnalyseurHistorique {
                         }
                     }
                 }
+            }
+
+            // QUI A GAFNEE LA PARIE
+            val total = MutableList(nbJoueurs) { 0 }
+            partie.donnes.forEach { donne ->
+                donne.scores.let { scores ->
+                    for (i in 0 until nbJoueurs) {
+                        total[i] += scores[i]
+                    }
+                }
+                total.toList()
+            }
+
+            val indices = if (total.isEmpty()) emptyList<Int>()
+            else {
+                val max = total.maxOrNull()!!
+                total.mapIndexedNotNull { i, v -> if (v == max) i else null }
+            }
+
+            indices.forEach { joueurIndex ->
+                val joueur = partie.joueurs[joueurIndex]
+                val joueurStats = joueurs[joueur.id]!!.parties[nbJoueurs]!!
+                joueurStats.partiesGagnees +=1
             }
 
             parties.add(
@@ -260,7 +284,7 @@ class AnalyseurHistorique {
                     pireScore = partiePireScore,
                     partieContrats = partieContrats.toList(),
                     partiePoignees = partiePoignees.toList(),
-                    partieChelems = partieChelems.toList()
+                    partieChelems = partieChelems.toList(),
                 )
             )
 
@@ -289,9 +313,9 @@ class AnalyseurHistorique {
         }
 
         val joueursImmutables = joueurs.mapValues { (_, dataJoueur) ->
-            StatistiquesJoueur(
+            StatistiquesPartieJoueur(
                 parties = dataJoueur.parties.mapValues { (_, partie) ->
-                    StatistiquesPartieJoueur(
+                    StatistiquesJoueur(
                         contrats = partie.contrats.toList(),
                         poignees = partie.poignees.toList(),
                         chelems = partie.chelems.toList(),
@@ -307,6 +331,8 @@ class AnalyseurHistorique {
                         pointsPerdus = partie.pointsPerdus,
                         meilleurScore = partie.meilleurScore,
                         pireScore = partie.pireScore,
+                        donnesGagnees = partie.donnesGagnees,
+                        partiesGagnees = partie.partiesGagnees
                     )
                 }.toMutableMap()
             )
@@ -336,15 +362,15 @@ class AnalyseurHistorique {
         return Triple(joueursImmutables, parties.toList(), globalesImmutables)
     }
 
-    private data class MutableStatistiquesJoueur(
-        val parties: MutableMap<Int, MutableStatistiquesPartieJoueur> = mutableMapOf(
-            3 to MutableStatistiquesPartieJoueur(),
-            4 to MutableStatistiquesPartieJoueur(),
-            5 to MutableStatistiquesPartieJoueur()
+    private data class MutableStatistiquesPartieJoueur(
+        val parties: MutableMap<Int, MutableStatistiquesJoueur> = mutableMapOf(
+            3 to MutableStatistiquesJoueur(),
+            4 to MutableStatistiquesJoueur(),
+            5 to MutableStatistiquesJoueur()
         )
     )
 
-    private data class MutableStatistiquesPartieJoueur(
+    private data class MutableStatistiquesJoueur(
         val contrats: MutableList<Int> = MutableList(4) { 0 },
         val poignees: MutableList<Int> = MutableList(4) { 0 },
         val chelems: MutableList<Int> = MutableList(3) { 0 },
@@ -363,6 +389,8 @@ class AnalyseurHistorique {
         var gainNet: Int = 0,
         var gainMoyenParDonne: Double = 0.0,
         var gainMoyenParPartie: Double = 0.0,
+        var donnesGagnees: Int = 0,
+        var partiesGagnees:Int =0,
     )
 
     private data class MutableStatistiquesGlobales(

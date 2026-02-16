@@ -70,7 +70,7 @@ fun JoueursScreen(
     onUpdateModeTriActuel: (Int) -> Unit = {}, // AJOUTER CE CALLBACK
     onUpdateJoueurs: (List<Joueur>) -> Unit,
     onRetour: () -> Unit,
-    onStatistiquesJoueur: (Joueur) -> Unit,
+    onStatistiquesPartieJoueur: (Joueur) -> Unit,
     onContinuer: () -> Unit
 ) {
     val joueursAvecHistorique = remember(historique) {
@@ -199,7 +199,7 @@ fun JoueursScreen(
 
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                             IconButton(
-                                onClick = { onStatistiquesJoueur(joueur) },
+                                onClick = { onStatistiquesPartieJoueur(joueur) },
                                 enabled = aHistorique,
                                 modifier = Modifier.size(36.dp)
                             ) {

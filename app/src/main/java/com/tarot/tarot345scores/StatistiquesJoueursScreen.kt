@@ -37,7 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun StatistiquesJoueursScreen(
+fun StatistiquesPartieJoueursScreen(
     historique: Historique,
     joueur: Joueur,
     onNavigateBack: () -> Unit,
@@ -258,6 +258,20 @@ fun StatistiquesJoueursScreen(
                                 )
                                 Text(
                                     "Total donnes: ${statsAffichees.totalDonnes}",
+                                    color = Color.White
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = if (statsAffichees.partiesGagnees < 2) "Partie gagnée: ${statsAffichees.partiesGagnees}"
+                                    else "Parties gagnées: ${statsAffichees.partiesGagnees}",
+                                    color = Color.White
+                                )
+
+                                Text(
+                                    text = if (statsAffichees.donnesGagnees < 2) "Donne gagnée: ${statsAffichees.donnesGagnees}"
+                                    else "Donnes gagnées: ${statsAffichees.donnesGagnees}",
                                     color = Color.White
                                 )
 
@@ -492,7 +506,8 @@ fun StatistiquesJoueursScreen(
         }
     }
 }
-private fun agregerStats(parties: MutableMap<Int, StatistiquesPartieJoueur>): StatistiquesPartieJoueur? {
+
+private fun agregerStats(parties: MutableMap<Int, StatistiquesJoueur>): StatistiquesJoueur? {
     if (parties.isEmpty()) return null
 
     val contrats = MutableList(4) { 0 }
@@ -510,6 +525,8 @@ private fun agregerStats(parties: MutableMap<Int, StatistiquesPartieJoueur>): St
     var pointsPerdus = 0
     var meilleurScore = Int.MIN_VALUE
     var pireScore = Int.MAX_VALUE
+    var donnesGagnees: Int = 0
+    var partiesGagnees: Int = 0
 
     parties.values.forEach { stats ->
         for (i in contrats.indices) {
@@ -534,9 +551,11 @@ private fun agregerStats(parties: MutableMap<Int, StatistiquesPartieJoueur>): St
         pointsPerdus += stats.pointsPerdus
         meilleurScore = maxOf(meilleurScore, stats.meilleurScore)
         pireScore = minOf(pireScore, stats.pireScore)
+        donnesGagnees += stats.donnesGagnees
+        partiesGagnees += stats.partiesGagnees
     }
 
-    return StatistiquesPartieJoueur(
+    return StatistiquesJoueur(
         contrats = contrats,
         poignees = poignees,
         chelems = chelems,
@@ -552,5 +571,7 @@ private fun agregerStats(parties: MutableMap<Int, StatistiquesPartieJoueur>): St
         pointsPerdus = pointsPerdus,
         meilleurScore = meilleurScore,
         pireScore = pireScore,
+        donnesGagnees = donnesGagnees,
+        partiesGagnees = partiesGagnees
     )
 }
