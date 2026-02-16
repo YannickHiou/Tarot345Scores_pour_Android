@@ -582,8 +582,8 @@ fun afficherScoresTableLigneEntete(
                     fontSize = cellFontSize,
                     weight = 1f,
                     cellHeight = rowHeight,
-                    backgroundColor = Color(JEUX_COULEUR),
-                    textColor = Color.White
+                    backgroundColor = Color(0xffb6caff),
+                    textColor = Color.Black
                 )
             }
         }

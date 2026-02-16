@@ -250,7 +250,7 @@ fun HeaderRow(joueurs: List<Joueur>) {
         modifier = Modifier
             .fillMaxWidth()
             .height(30.dp)
-            .background(Color(JEUX_COULEUR))
+            .background(Color(0xffb6caff))
     ) {
         joueurs.forEach { joueur ->
             Box(
@@ -264,7 +264,7 @@ fun HeaderRow(joueurs: List<Joueur>) {
                 Text(
                     text = joueur.nomUI,
                     fontSize = 14.sp,
-                    color = Color.White,
+                    color = Color.Black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
