@@ -92,9 +92,6 @@ fun JoueursScreen(
         }
     }
 
-    // SUPPRIMER CETTE LIGNE : var modeTriActuel by remember { mutableStateOf(0) }
-    // modeTriActuel vient maintenant des paramètres
-
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }

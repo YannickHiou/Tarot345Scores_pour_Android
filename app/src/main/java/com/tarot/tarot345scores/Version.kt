@@ -19,5 +19,5 @@
 package com.tarot.tarot345scores
 
 object Version {
-    const val VERSION = "1.0.1"
+    const val VERSION = "1.0.3"
 }
